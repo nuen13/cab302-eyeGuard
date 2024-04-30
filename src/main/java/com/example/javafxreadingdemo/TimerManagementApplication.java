@@ -4,23 +4,29 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import java.io.IOException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class TimerManagementApplication extends Application {
     private Timeline timeline;
     private int secondsElapsed = 0;
+    private int breakInterval = 60; // Default break interval in seconds
 
     @FXML
     private Label timerLabel;
+    @FXML
+    private TextField breakIntervalField;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -31,7 +37,6 @@ public class TimerManagementApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
     @FXML
     private void initialize() {
         // Initialize timer label
@@ -40,9 +45,23 @@ public class TimerManagementApplication extends Application {
         // Create timeline for the timer
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             secondsElapsed++;
+            if (secondsElapsed % breakInterval == 0) {
+                handleBreak(); // Call method to handle break
+            }
             updateTimerLabel();
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
+    }
+
+    private void handleBreak() {
+        // Display an alert with the break message
+        Platform.runLater(() -> {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Break Time");
+            alert.setHeaderText(null);
+            alert.setContentText("Ring Ring... It is time for a Break");
+            alert.showAndWait();
+        });
     }
 
     private void updateTimerLabel() {
@@ -67,6 +86,20 @@ public class TimerManagementApplication extends Application {
         secondsElapsed = 0;
         updateTimerLabel();
         timeline.stop();
+    }
+
+    @FXML
+    private void onSetBreakIntervalButtonClicked(ActionEvent event) {
+        try {
+            int newInterval = Integer.parseInt(breakIntervalField.getText());
+            if (newInterval > 0) {
+                breakInterval = newInterval;
+            } else {
+                // Handle invalid input (negative or zero)
+            }
+        } catch (NumberFormatException e) {
+            // Handle invalid input (not a number)
+        }
     }
 
     public static void main(String[] args) {
