@@ -10,6 +10,7 @@ module com.example.javafxreadingdemo {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     opens com.example.javafxreadingdemo to javafx.fxml;
     exports com.example.javafxreadingdemo;
