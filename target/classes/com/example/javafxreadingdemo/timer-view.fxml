@@ -4,24 +4,42 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.javafxreadingdemo.TimerManagementApplication"
-      alignment="CENTER">
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
 
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.StackPane?>
 
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="205.0" prefWidth="168.0" styleClass="layout" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.javafxreadingdemo.TimerManagementApplication">
+<children>
     <!-- Title Label -->
-    <Label text="eyeGuard" style="-fx-font-size: 18pt;" />
-    <!-- Spacer -->
-    <Label text="" />
-
+    <Label text="eyeGuard" layoutX="15.0" layoutY="50.0" style="-fx-font-size: 18pt;" />
     <!-- Other UI elements -->
-    <Label fx:id="timerLabel"/>
-    <Button text="Start" onAction="#onStartButtonClicked"/>
-    <Button text="Pause" onAction="#onPauseButtonClicked"/>
-    <Button text="Reset" onAction="#onResetButtonClicked"/>
-    <TextField fx:id="breakIntervalField" promptText="Enter break interval in seconds"/>
-    <Button text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>
+    <Label layoutX="15.0" layoutY="90.0" prefWidth="90.0" fx:id="timerLabel"/>
+    <Button layoutX="15.0" layoutY="110.0" text="Start" onAction="#onStartButtonClicked"/>
+    <Button layoutX="15.0" layoutY="140.0" text="Pause" onAction="#onPauseButtonClicked"/>
+    <Button layoutX="15.0" layoutY="170.0"  text="Reset" onAction="#onResetButtonClicked"/>
+    <TextField layoutX="15.0" layoutY="200.0" fx:id="breakIntervalField" promptText="Enter break interval in seconds"/>
+    <Button layoutX="15.0" layoutY="220.0" text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>
 
-    <Button fx:id="setting" text="Setting" onAction="#gotosetting"/>
-</VBox>
+    <Button layoutX="15.0" layoutY="250.0" fx:id="setting" text="Setting" onAction="#gotosetting"/>
+</children>
+
+</AnchorPane>

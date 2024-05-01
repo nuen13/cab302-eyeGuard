@@ -47,8 +47,8 @@ public class TimerManagementApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("timer-view.fxml"));
-        VBox root = fxmlLoader.load();
-        Scene scene = new Scene(root, 320, 240);
+
+        Scene scene = new Scene((Parent)fxmlLoader.load(), 640.0, 360.0);
         stage.setTitle("eyeGuard App");
         stage.setScene(scene);
         stage.show();
