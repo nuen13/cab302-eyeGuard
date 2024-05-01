@@ -96,6 +96,7 @@ public class TimerManagementApplication extends Application {
     @FXML
     private void onResetButtonClicked(ActionEvent event) {
         secondsElapsed = 0;
+        breakIntervalField.setText(""); // Clear the text field for break interval
         updateTimerLabel();
         timeline.stop();
         breakIntervalSet = false; //Reset the flag as timer is reset
