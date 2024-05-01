@@ -40,6 +40,7 @@
                 <FXCollections fx:factory="observableArrayList">
                     <String fx:value="bird" />
                     <String fx:value="bus" />
+                    <String fx:value="no sound"/>
                 </FXCollections>
             </items>
         </ComboBox>

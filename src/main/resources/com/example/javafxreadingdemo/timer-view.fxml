@@ -22,4 +22,5 @@
     <Button text="Analytics" onAction="#onAnalyticsButtonClicked"/>
     <TextField fx:id="breakIntervalField" promptText="Enter break interval in seconds"/>
     <Button text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>
+    <Button fx:id="setting" text="Setting" onAction="#gotosetting"/>
 </VBox>
