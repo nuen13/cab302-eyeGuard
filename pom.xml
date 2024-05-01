@@ -28,6 +28,16 @@
         </dependency>
         <!-- Add other JavaFX dependencies as needed -->
 
+
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-junit5</artifactId>
+            <version>4.0.16-alpha</version> <!-- or the latest version -->
+            <scope>test</scope>
+        </dependency>
+
+
+
         <!-- TestFX dependencies -->
         <dependency>
             <groupId>org.testfx</groupId>
