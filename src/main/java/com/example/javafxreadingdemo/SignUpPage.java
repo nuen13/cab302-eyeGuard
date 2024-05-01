@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.regex.Pattern;
 
 public class SignUpPage extends JFrame {
@@ -181,6 +182,7 @@ public class SignUpPage extends JFrame {
     }
 
     public static void main(String[] args) {
+        Connection connection = DatabaseConnection.getInstance();
         SwingUtilities.invokeLater(SignUpPage::new);
     }
 }
