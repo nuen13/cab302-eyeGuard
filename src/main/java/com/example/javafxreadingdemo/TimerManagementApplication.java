@@ -107,7 +107,7 @@ public class TimerManagementApplication extends Application {
             int newInterval = Integer.parseInt(breakIntervalField.getText());
             if (newInterval > 0) {
                 breakInterval = newInterval;
-                updateTimerLabel(); //Update the label immediately
+                updateTimerLabel(); //Update the timer label
                 breakIntervalSet = true; // Update flag to indicate interval is set
             } else {
                 showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
