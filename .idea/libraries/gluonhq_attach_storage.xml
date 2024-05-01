@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="gluonhq.attach.storage" type="repository">
+    <properties maven-id="com.gluonhq.attach:storage:4.0.17" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/gluonhq/attach/storage/4.0.17/storage-4.0.17.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/gluonhq/attach/util/4.0.17/util-4.0.17.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

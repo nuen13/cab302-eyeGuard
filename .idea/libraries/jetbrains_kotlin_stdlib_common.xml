@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jetbrains.kotlin.stdlib.common" type="repository">
+    <properties maven-id="org.jetbrains.kotlin:kotlin-stdlib-common:1.8.10" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.8.10/kotlin-stdlib-common-1.8.10.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
