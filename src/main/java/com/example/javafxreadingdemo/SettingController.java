@@ -79,6 +79,10 @@ public class SettingController {
 
     private Clip clip;
     private void playSound(String soundName) {
+        if ("no sound".equals(soundName)) {
+            return;
+        }
+
         if (soundName != null) {
             try {
                 // Stop the previous sound if it's playing
