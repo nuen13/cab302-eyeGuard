@@ -17,6 +17,7 @@ import javafx.util.Duration;
 import java.io.IOException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.Node;
 
 public class TimerManagementApplication extends Application {
     private Timeline timeline;
@@ -109,6 +110,8 @@ public class TimerManagementApplication extends Application {
             // ((Stage)timerLabel.getScene().getWindow()).close();
 
             // Open the analytics in a new window
+            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            currentStage.close();
             Analytics analytics = new Analytics();
             Stage analyticsStage = new Stage();
             analytics.start(analyticsStage);
