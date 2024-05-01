@@ -23,6 +23,8 @@ public class TimerManagementApplication extends Application {
     private int secondsElapsed = 0;
     private int breakInterval = 60; // Default break interval in seconds
 
+    private boolean breakIntervalSet = false; //Flag to track if break interval has been set.
+
     @FXML
     private Label timerLabel;
     @FXML
@@ -54,8 +56,13 @@ public class TimerManagementApplication extends Application {
     }
 
     private void handleBreak() {
-        // Display an alert with the break message
-        Platform.runLater(() -> {
+            //Pause timeline and reset seconds before showing break message.
+            timeline.pause();
+            secondsElapsed = 0;
+            updateTimerLabel();
+
+            // Display an alert with the break message
+            Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Break Time");
             alert.setHeaderText(null);
@@ -73,7 +80,12 @@ public class TimerManagementApplication extends Application {
 
     @FXML
     private void onStartButtonClicked(ActionEvent event) {
-        timeline.play();
+        if (breakIntervalSet) {
+            timeline.play();
+        } else{
+            showAlert("Start Error", "Please set the break interval before starting the timer.");
+
+        }
     }
 
     @FXML
@@ -86,6 +98,7 @@ public class TimerManagementApplication extends Application {
         secondsElapsed = 0;
         updateTimerLabel();
         timeline.stop();
+        breakIntervalSet = false; //Reset the flag as timer is reset
     }
 
     @FXML
@@ -95,11 +108,14 @@ public class TimerManagementApplication extends Application {
             if (newInterval > 0) {
                 breakInterval = newInterval;
                 updateTimerLabel(); //Update the label immediately
+                breakIntervalSet = true; // Update flag to indicate interval is set
             } else {
                 showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
+                breakIntervalSet = false; //Ensure flag is false if invalid input
             }
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter a valid number.");// Handle invalid input (not a number)
+            breakIntervalSet = false; //Ensure flag is false if invalid input
         }
     }
     private void showAlert(String title, String content){
