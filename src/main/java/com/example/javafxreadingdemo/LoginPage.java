@@ -26,7 +26,7 @@ public class LoginPage extends JFrame {
         constraints.insets = new Insets(10, 20, 10, 20);
 
         try {
-            BufferedImage originalImage = ImageIO.read(new File("C:\\Users\\BitchBoyAllem\\IdeaProjects\\Login Page\\src\\Logo\\Logo.jpg.png"));
+            BufferedImage originalImage = ImageIO.read(getClass().getResourceAsStream("/Logo/Logo.jpg.png"));
             ImageIcon icon = new ImageIcon(resizeImage(originalImage, 200, 100));
             JLabel logoLabel = new JLabel(icon);
             constraints.gridx = 0;

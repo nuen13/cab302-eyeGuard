@@ -32,7 +32,7 @@ public class SignUpPage extends JFrame {
 
         // Logo
         try {
-            BufferedImage originalImage = ImageIO.read(new File("C:\\Users\\BitchBoyAllem\\IdeaProjects\\Login Page\\src\\Logo\\Logo.jpg.png"));
+            BufferedImage originalImage = ImageIO.read(getClass().getResourceAsStream("/Logo/Logo.jpg.png"));
             ImageIcon icon = new ImageIcon(originalImage.getScaledInstance(200, 100, Image.SCALE_SMOOTH));
             JLabel logoLabel = new JLabel(icon);
             constraints.gridx = 0;
