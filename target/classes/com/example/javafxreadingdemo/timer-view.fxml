@@ -19,6 +19,7 @@
     <Button text="Start" onAction="#onStartButtonClicked"/>
     <Button text="Pause" onAction="#onPauseButtonClicked"/>
     <Button text="Reset" onAction="#onResetButtonClicked"/>
+    <Button text="Analytics" onAction="#onAnalyticsButtonClicked"/>
     <TextField fx:id="breakIntervalField" promptText="Enter break interval in seconds"/>
     <Button text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>
 </VBox>

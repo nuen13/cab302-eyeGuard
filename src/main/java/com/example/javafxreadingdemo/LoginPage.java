@@ -1,5 +1,7 @@
 package com.example.javafxreadingdemo;
 
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -93,6 +95,20 @@ public class LoginPage extends JFrame {
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setPreferredSize(new Dimension(280, 40));
+        if ("Login".equals(buttonText)) {
+            button.addActionListener(e -> {
+                dispose(); // Close the login window
+                // Initialize JavaFX Platform and launch the JavaFX application
+                Platform.startup(() -> {
+                    TimerManagementApplication app = new TimerManagementApplication();
+                    try {
+                        app.start(new Stage()); // Start the JavaFX application
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
+            });
+        }
         panel.add(button, constraints);
     }
 

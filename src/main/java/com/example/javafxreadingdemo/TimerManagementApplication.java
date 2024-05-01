@@ -56,13 +56,13 @@ public class TimerManagementApplication extends Application {
     }
 
     private void handleBreak() {
-            //Pause timeline and reset seconds before showing break message.
-            timeline.pause();
-            secondsElapsed = 0;
-            updateTimerLabel();
+        //Pause timeline and reset seconds before showing break message.
+        timeline.pause();
+        secondsElapsed = 0;
+        updateTimerLabel();
 
-            // Display an alert with the break message
-            Platform.runLater(() -> {
+        // Display an alert with the break message
+        Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Break Time");
             alert.setHeaderText(null);
@@ -100,6 +100,22 @@ public class TimerManagementApplication extends Application {
         updateTimerLabel();
         timeline.stop();
         breakIntervalSet = false; //Reset the flag as timer is reset
+    }
+
+    @FXML
+    private void onAnalyticsButtonClicked(ActionEvent event) {
+        try {
+            // Close the current stage if you want to open analytics in the same window
+            // ((Stage)timerLabel.getScene().getWindow()).close();
+
+            // Open the analytics in a new window
+            Analytics analytics = new Analytics();
+            Stage analyticsStage = new Stage();
+            analytics.start(analyticsStage);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to open the analytics page.");
+        }
     }
 
     @FXML
