@@ -68,7 +68,7 @@ public class TimerManagementApplication extends Application {
         int hours = secondsElapsed / 3600;
         int minutes = (secondsElapsed % 3600) / 60;
         int seconds = secondsElapsed % 60;
-        timerLabel.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+        timerLabel.setText(String.format("Time: %02d:%02d:%02d | Break Interval: %s sec", hours, minutes, seconds, breakIntervalField.getText()));
     }
 
     @FXML
@@ -94,12 +94,20 @@ public class TimerManagementApplication extends Application {
             int newInterval = Integer.parseInt(breakIntervalField.getText());
             if (newInterval > 0) {
                 breakInterval = newInterval;
+                updateTimerLabel(); //Update the label immediately
             } else {
-                // Handle invalid input (negative or zero)
+                showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
             }
         } catch (NumberFormatException e) {
-            // Handle invalid input (not a number)
+            showAlert("Invalid Input", "Please enter a valid number.");// Handle invalid input (not a number)
         }
+    }
+    private void showAlert(String title, String content){
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {
