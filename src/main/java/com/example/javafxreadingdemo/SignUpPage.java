@@ -16,12 +16,17 @@ public class SignUpPage extends JFrame {
     private JPasswordField passwordField;
     private JPasswordField confirmPasswordField;
 
+    private UserDAO userDAO; //DAO object for database operations
+
     public SignUpPage() {
         super("Sign Up");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(350, 500);
         setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(32, 34, 37));
+
+        userDAO = new UserDAO(); //initialise UserDAO
+        userDAO.createTable(); //Ensure table exists
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -30,6 +35,7 @@ public class SignUpPage extends JFrame {
         constraints.weightx = 1;
         constraints.weighty = 1;
         constraints.insets = new Insets(10, 20, 10, 20);
+
 
         // Logo
         try {
@@ -175,14 +181,20 @@ public class SignUpPage extends JFrame {
     }
 
     private void signUpUser() {
-        // Assume the sign-up is successful
-        JOptionPane.showMessageDialog(this, "Sign-up successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        dispose();  // Close the SignUpPage
-        new LoginPage().setVisible(true);  // Open the com.example.javafxreadingdemo.LoginPage
+        String email = emailField.getText();
+        String password = new String(passwordField.getPassword());
+        if (validateInput()){ // If sign-up is successful
+            User newUser = new User(email, password); //Create a new user object
+            userDAO.insert(newUser); //insert the new user into the database
+            JOptionPane.showMessageDialog(this, "Sign-up successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            dispose();  // Close the SignUpPage
+            new LoginPage().setVisible(true);  // Open the com.example.javafxreadingdemo.LoginPage
+
+        }
+
     }
 
     public static void main(String[] args) {
-        Connection connection = DatabaseConnection.getInstance();
         SwingUtilities.invokeLater(SignUpPage::new);
     }
 }
