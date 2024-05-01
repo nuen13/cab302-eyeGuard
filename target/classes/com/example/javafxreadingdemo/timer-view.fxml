@@ -9,6 +9,7 @@
       fx:controller="com.example.javafxreadingdemo.TimerManagementApplication"
       alignment="CENTER">
 
+
     <!-- Title Label -->
     <Label text="eyeGuard" style="-fx-font-size: 18pt;" />
     <!-- Spacer -->
@@ -21,4 +22,6 @@
     <Button text="Reset" onAction="#onResetButtonClicked"/>
     <TextField fx:id="breakIntervalField" promptText="Enter break interval in seconds"/>
     <Button text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>
+
+    <Button fx:id="setting" text="Setting" onAction="#gotosetting"/>
 </VBox>

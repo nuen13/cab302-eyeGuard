@@ -8,7 +8,9 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -18,12 +20,24 @@ import java.io.IOException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 public class TimerManagementApplication extends Application {
+
+
     private Timeline timeline;
     private int secondsElapsed = 0;
     private int breakInterval = 60; // Default break interval in seconds
 
     private boolean breakIntervalSet = false; //Flag to track if break interval has been set.
+
 
     @FXML
     private Label timerLabel;
@@ -127,6 +141,15 @@ public class TimerManagementApplication extends Application {
         alert.showAndWait();
     }
 
+    @FXML
+    private Button setting;
+    @FXML
+    protected void gotosetting() throws IOException {
+        Stage stage = (Stage)this.setting.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("setting-view.fxml"));
+        Scene scene = new Scene((Parent)fxmlLoader.load(), 640.0, 360.0);
+        stage.setScene(scene);
+    }
     public static void main(String[] args) {
         launch(args);
     }
