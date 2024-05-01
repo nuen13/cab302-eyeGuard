@@ -55,7 +55,7 @@ public class SettingController {
             updateBackgroundColor(newVal);
         });
 
-//        alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> playSound(newVal));
+        alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> playSound(newVal));
     }
 
     private void updateBackgroundColor(String colorName) {
@@ -73,6 +73,33 @@ public class SettingController {
                 case "Spring":
                     rootPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
                     break;
+            }
+        }
+    }
+
+    private Clip clip;
+    private void playSound(String soundName) {
+        if (soundName != null) {
+            try {
+                // Stop the previous sound if it's playing
+                if (clip != null) {
+                    clip.stop();
+                    clip.close();
+                }
+
+                // Load the audio file
+                URL soundURL = getClass().getResource("/soundEffect/" + soundName + ".wav");
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundURL);
+
+                // Get a sound clip resource
+                clip = AudioSystem.getClip();
+                clip.open(audioInputStream);
+
+                // Play the audio clip
+                clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
+                System.err.println("Error playing sound file: " + soundName);
             }
         }
     }
