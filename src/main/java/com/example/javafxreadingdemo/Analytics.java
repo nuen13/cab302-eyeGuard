@@ -35,6 +35,19 @@ public class Analytics extends Application{
             topBar.setLeft(backButton);
             BorderPane.setMargin(backButton, new Insets(10));
 
+            backButton.setOnAction(event -> {
+                try {
+                    new TimerManagementApplication().start(new Stage()); // Start a new instance of TimerManagementApplication
+                    Stage currentStage = (Stage) backButton.getScene().getWindow();
+                    currentStage.close(); // Optionally close the current (Analytics) window
+                } catch (Exception e) {
+                    e.printStackTrace(); // Handle exceptions, perhaps show an error message
+                }
+            });
+            backButton.setId("backButton");
+            topBar.setLeft(backButton);
+            BorderPane.setMargin(backButton, new Insets(10));
+
 
             HBox analyticsButtons = new HBox(10);
             analyticsButtons.setAlignment(Pos.CENTER);
