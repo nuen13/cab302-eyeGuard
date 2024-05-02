@@ -37,6 +37,8 @@ public class TimeAppController {
     @FXML
     private Button burst;
 
+
+    // initialize timer
     @FXML
     private void initialize() {
         // Initialize timer label
@@ -77,7 +79,7 @@ public class TimeAppController {
         int min;
         int sec;
 
-        int displayTime = (timeInMinute % 3600) / 60;
+        int displayTime = timeInMinute / 60;
 
         if (startActive){
             hours = secondsElapsed / 3600;
@@ -90,7 +92,7 @@ public class TimeAppController {
             min = (timeInMinute % 3600) / 60;
             sec = timeInMinute % 60;
             //timerLabel.setText(String.format("Time: %02d:%02d:%02d | Break Interval: %s sec", hours, minutes, seconds, breakIntervalField.getText()));
-            timerLabel.setText(String.format("Time: %02d:%02d:%02d| Work Interval: %s minute", hours, min, sec, displayTime));
+            timerLabel.setText(String.format("Time: %02d:%02d:%02d | Work Interval: %s minute", hours, min, sec, displayTime));
         }
     }
 
@@ -173,6 +175,28 @@ public class TimeAppController {
         breakIntervalSet = true; // Update flag to indicate interval is set
     }
     //set up alert
+
+    @FXML
+    private void onGrindClicked(ActionEvent event){
+        timeInMinute = 3600;
+        breakInterval = 3600;
+
+        updateTimerLabel(); //Update the timer label
+        breakIntervalSet = true; // Update flag to indicate interval is set
+    }
+    //set up alert
+
+    @FXML
+    private void onCramClicked(ActionEvent event){
+        timeInMinute = 5400;
+        breakInterval = 5400;
+
+        updateTimerLabel(); //Update the timer label
+        breakIntervalSet = true; // Update flag to indicate interval is set
+    }
+    //set up alert
+
+
     private void showAlert(String title, String content){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

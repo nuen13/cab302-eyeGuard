@@ -16,8 +16,8 @@
 
         <!-- Quick Time Buttons -->
         <Button fx:id="burst" layoutX="10" layoutY="130" text="Bursts" onAction ="#onBurstClicked" />
-        <Button fx:id="grind" layoutX="100" layoutY="130" text="Grind"/>
-        <Button fx:id="cram" layoutX="190" layoutY="130" text="Cram"/>
+        <Button fx:id="grind" layoutX="100" layoutY="130" text="Grind" onAction ="#onGrindClicked" />
+        <Button fx:id="cram" layoutX="190" layoutY="130" text="Cram" onAction ="#onCramClicked"/>
 
         <!-- Time Settings -->
         <TextField fx:id="breakIntervalField" layoutX="10" layoutY="170" prefWidth="180" promptText="Enter break interval in seconds"/>
