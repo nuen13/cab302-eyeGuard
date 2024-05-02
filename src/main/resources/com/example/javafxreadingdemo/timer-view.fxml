@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.javafxreadingdemo.TimerManagementApplication"
-      alignment="CENTER">
+<AnchorPane fx:id="roof" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" styleClass="layout"
+            xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.javafxreadingdemo.TimeAppController">
+    <children>
+        <!-- Logo Label -->
+        <Label fx:id="logoText" layoutX="10" layoutY="10" text="eyeGuard" style="-fx-font-size: 18pt;"/>
 
-    <!-- Title Label -->
-    <Label text="eyeGuard" style="-fx-font-size: 18pt;" />
-    <!-- Spacer -->
-    <Label text="" />
+        <!-- Tool buttons -->
+        <Button fx:id="analytics" layoutX="10" layoutY="50" text="Analytics" onAction="#onAnalyticsButtonClicked"/>
+        <Button fx:id="setting" layoutX="100" layoutY="50" text="Settings" onAction="#gotosetting"/>
 
-    <!-- Other UI elements -->
-    <Label fx:id="timerLabel"/>
-    <Button text="Start" onAction="#onStartButtonClicked"/>
-    <Button text="Pause" onAction="#onPauseButtonClicked"/>
-    <Button text="Reset" onAction="#onResetButtonClicked"/>
-    <Button text="Analytics" onAction="#onAnalyticsButtonClicked"/>
-    <TextField fx:id="breakIntervalField" promptText="Enter break interval in seconds"/>
-    <Button text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>
-    <Button fx:id="setting" text="Setting" onAction="#gotosetting"/>
-</VBox>
+        <!-- Quick Time Buttons -->
+        <Button fx:id="burst" layoutX="10" layoutY="130" text="Bursts" onAction ="#onBurstClicked" />
+        <Button fx:id="grind" layoutX="100" layoutY="130" text="Grind"/>
+        <Button fx:id="cram" layoutX="190" layoutY="130" text="Cram"/>
+
+        <!-- Time Settings -->
+        <TextField fx:id="breakIntervalField" layoutX="10" layoutY="170" prefWidth="180" promptText="Enter break interval in seconds"/>
+        <Button layoutX="200" layoutY="170" text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>
+
+        <!-- Timer and Action Buttons -->
+        <Label fx:id="timerLabel" layoutX="10" layoutY="100" text="Timer:"/>
+        <Button fx:id="pause" layoutX="10" layoutY="210" text="Pause" onAction="#onPauseButtonClicked"/>
+        <Button fx:id="start" layoutX="100" layoutY="210" text="Start" onAction="#onStartButtonClicked"/>
+        <Button fx:id="reset" layoutX="190" layoutY="210" text="Reset" onAction="#onResetButtonClicked"/>
+    </children>
+</AnchorPane>

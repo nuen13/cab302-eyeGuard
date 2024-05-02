@@ -45,6 +45,7 @@ public class LoginPage extends JFrame {
             System.out.println("Logo file not found or error reading the file.");
         }
 
+
         addLabelAndTextField(panel, "EMAIL", 1);
         addLabelAndTextField(panel, "PASSWORD", 3);
         addButton(panel, "Login", 5);
