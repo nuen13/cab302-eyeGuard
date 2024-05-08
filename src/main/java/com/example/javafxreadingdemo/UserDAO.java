@@ -1,6 +1,7 @@
 package com.example.javafxreadingdemo;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +21,19 @@ public class UserDAO {
                             + "email VARCHAR(255) NOT NULL UNIQUE, "
                             + "password VARCHAR(255) NOT NULL"
                             + ")"
+            ); // Columns for tracking access and streak
+            createTable.execute(
+                    "ALTER TABLE users ADD COLUMN last_access_date DATE"
+            );
+            createTable.execute(
+                    "ALTER TABLE users ADD COLUMN day_streak INTEGER DEFAULT 0"
             );
         } catch (SQLException ex) {
-            System.err.println(ex);
+            if (ex.getMessage().contains("duplicate column name")){
+                System.out.println("Column already exists, will not add again.");
+            }else {
+                System.err.println(ex);
+            }
         }
     }
 
@@ -99,6 +110,34 @@ public class UserDAO {
             System.err.println(ex);
         }
         return null;
+    }
+
+    public void updateLoginDateAndStreak(int userId){
+        try {
+            PreparedStatement getLastAccess = connection.prepareStatement(
+                    "SELECT last_access_date, day_streak FROM users WHERE id = ?"
+            );
+            getLastAccess.setInt(1, userId);
+            ResultSet rs = getLastAccess.executeQuery();
+            LocalDate lastAccessDate = null;
+            int dayStreak = 0;
+            if (rs.next()){
+                lastAccessDate = rs.getDate("last_access_date").toLocalDate();
+                dayStreak = rs.getInt("day_streak");
+            }
+            LocalDate today = LocalDate.now();
+            int newStreak = (lastAccessDate != null && lastAccessDate.equals(today.minusDays(1))) ? dayStreak + 1 : 1;
+
+            //Update the last access date and day streak
+            PreparedStatement updateAccess = connection.prepareStatement(
+                    "UPDATE users SET last_access_date = ?, day_streak = ? WHERE id = ?");
+            updateAccess.setDate(1, Date.valueOf(today));
+            updateAccess.setInt(2, newStreak);
+            updateAccess.setInt(3, userId);
+            updateAccess.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void close() {
