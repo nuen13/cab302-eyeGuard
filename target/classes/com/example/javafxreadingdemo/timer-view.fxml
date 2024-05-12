@@ -11,22 +11,32 @@
         <Label fx:id="logoText" layoutX="10" layoutY="10" text="eyeGuard" style="-fx-font-size: 18pt;"/>
 
         <!-- Tool buttons -->
-        <Button fx:id="analytics" layoutX="10" layoutY="50" text="Analytics" onAction="#onAnalyticsButtonClicked"/>
-        <Button fx:id="setting" layoutX="100" layoutY="50" text="Settings" onAction="#gotosetting"/>
+        <Button fx:id="analytics" layoutX="300" layoutY="10" text="Analytics" onAction="#onAnalyticsButtonClicked"/>
+        <Button fx:id="setting" layoutX="400" layoutY="10" text="Settings" onAction="#gotosetting"/>
+        <Button fx:id="account" layoutX="500" layoutY="10" text="Account"/>
+
+        <!-- Time       -->
+        <Button fx:id="work" layoutX="150" layoutY="50" text="Work Time" onAction="#onworkTime"/>
+        <Button fx:id="break" layoutX="300" layoutY="50" text="Break Time" onAction="#onbreakTime"/>
+
+
+
 
         <!-- Quick Time Buttons -->
-        <Button fx:id="burst" layoutX="10" layoutY="130" text="Bursts" onAction ="#onBurstClicked" />
-        <Button fx:id="grind" layoutX="100" layoutY="130" text="Grind" onAction ="#onGrindClicked" />
-        <Button fx:id="cram" layoutX="190" layoutY="130" text="Cram" onAction ="#onCramClicked"/>
+        <Button fx:id="lowBtn" layoutX="100" layoutY="90" text="Bursts (30 mins)" onAction ="#onLowClicked" />
+        <Button fx:id="midBtn" layoutX="250" layoutY="90" text="Grind (45 mins)" onAction ="#onMidClicked" />
+        <Button fx:id="highBtn" layoutX="400" layoutY="90" text="Cram (1 hour)" onAction ="#onHighClicked"/>
+
+        <!--Time Label -->
+        <Label fx:id="timerLabel" layoutX="180" layoutY="120" text="" style="-fx-font-size: 60px;"/>
+
 
         <!-- Time Settings -->
-        <TextField fx:id="breakIntervalField" layoutX="10" layoutY="170" prefWidth="180" promptText="Enter break interval in seconds"/>
-        <Button layoutX="200" layoutY="170" text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>
+<!--        <TextField fx:id="breakIntervalField" layoutX="10" layoutY="170" prefWidth="180" promptText="Enter break interval in seconds"/>-->
+<!--        <Button layoutX="200" layoutY="170" text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>-->
 
         <!-- Timer and Action Buttons -->
-        <Label fx:id="timerLabel" layoutX="10" layoutY="100" text="Timer:"/>
-        <Button fx:id="pause" layoutX="10" layoutY="210" text="Pause" onAction="#onPauseButtonClicked"/>
-        <Button fx:id="start" layoutX="100" layoutY="210" text="Start" onAction="#onStartButtonClicked"/>
-        <Button fx:id="reset" layoutX="190" layoutY="210" text="Reset" onAction="#onResetButtonClicked"/>
+        <Button fx:id="startBtn" layoutX="250" layoutY="200" text="Start" onAction="#StartTime"/>
+<!--        <Button fx:id="reset" layoutX="300" layoutY="200" text="Reset" onAction="#onResetButtonClicked"/>-->
     </children>
 </AnchorPane>

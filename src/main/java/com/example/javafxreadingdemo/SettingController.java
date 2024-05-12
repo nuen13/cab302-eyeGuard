@@ -28,6 +28,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import java.net.URL;
 
+class SharedVarSettings {
+    static String themeColor = "Yellow";
+}
+
 public class SettingController {
 
     @FXML
