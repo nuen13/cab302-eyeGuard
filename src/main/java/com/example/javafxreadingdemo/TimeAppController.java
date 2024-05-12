@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,11 +16,19 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import javax.swing.*;
 import java.io.IOException;
+
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
 
 public class TimeAppController {
 
@@ -34,7 +43,8 @@ public class TimeAppController {
     private Label timerLabel;
     @FXML
     private TextField timeIntervalField;
-
+    @FXML
+    private AnchorPane rootPane;
     private int newTime = 0;
     @FXML
     private Button startBtn;
@@ -52,6 +62,7 @@ public class TimeAppController {
     // initialize timer
     @FXML
     private void initialize() {
+        setBackgroundTheme ();
         // Initialize timer label
         newTime = 1;
         updateTimerTime(newTime);
@@ -118,7 +129,6 @@ public class TimeAppController {
         timerLabel.setText(String.format("%02d:%02d:%02d", hours, min, sec));
 
     }
-
     private void updateTimerTime(int newTime){
         if(timerRun){
             timeline.stop();
@@ -304,6 +314,12 @@ public class TimeAppController {
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("setting-view.fxml"));
         Scene scene = new Scene((Parent)fxmlLoader.load(), 640.0, 360.0);
         stage.setScene(scene);
+    }
+
+    private void setBackgroundTheme (){
+        BackgroundFill backgroundFill = new BackgroundFill(ShareVarSetting.themeColor, CornerRadii.EMPTY, Insets.EMPTY);
+        Background background = new Background(backgroundFill);
+        rootPane.setBackground(background);
     }
 }
 

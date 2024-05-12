@@ -3,7 +3,17 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 
-<AnchorPane fx:id="roof" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
             minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" styleClass="layout"
             xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.javafxreadingdemo.TimeAppController">
     <children>

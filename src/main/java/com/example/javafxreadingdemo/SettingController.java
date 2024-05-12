@@ -6,15 +6,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
+
+
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import javafx.scene.paint.Color;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
 import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
 
 import javafx.scene.control.ComboBox;
 
@@ -28,12 +31,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import java.net.URL;
 
-class SharedVarSettings {
-    static String themeColor = "Yellow";
-}
 
 public class SettingController {
 
+    private Color newColor;
     @FXML
     private Button back;
     @FXML
@@ -55,27 +56,38 @@ public class SettingController {
 
     @FXML
     public void initialize() {
+
         themeColor.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             updateBackgroundColor(newVal);
         });
+        setBackgroundTheme(ShareVarSetting.themeColor);
 
         alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> playSound(newVal));
     }
 
+    private void setBackgroundTheme (Color color ){
+        BackgroundFill backgroundFill = new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY);
+        Background background = new Background(backgroundFill);
+        rootPane.setBackground(background);
+    }
     private void updateBackgroundColor(String colorName) {
         if (colorName != null) {
             switch (colorName) {
                 case "Summer":
-                    rootPane.setBackground(new Background(new BackgroundFill(Color.LIGHTYELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+                    ShareVarSetting.themeColor  = Color.LIGHTCORAL;
+                    setBackgroundTheme(ShareVarSetting.themeColor);
                     break;
                 case "Autumn":
-                    rootPane.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+                    ShareVarSetting.themeColor = newColor = Color.LIGHTGOLDENRODYELLOW;
+                    setBackgroundTheme(ShareVarSetting.themeColor);
                     break;
                 case "Winter":
-                    rootPane.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+                    ShareVarSetting.themeColor = newColor = Color.LIGHTBLUE;
+                    setBackgroundTheme(ShareVarSetting.themeColor);
                     break;
                 case "Spring":
-                    rootPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+                    ShareVarSetting.themeColor = newColor = Color.LIGHTGREEN;
+                    setBackgroundTheme(ShareVarSetting.themeColor);
                     break;
             }
         }

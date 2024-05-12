@@ -27,10 +27,10 @@
         <ComboBox fx:id="themeColor" layoutX="15.0" layoutY="50.0" prefWidth="90.0" promptText="choose">
             <items>
                 <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Summer"/>
+                    <String fx:value="Spring"/>
+                    <String fx:value="Summer" />
                     <String fx:value="Autumn" />
                     <String fx:value="Winter" />
-                    <String fx:value="Spring" />
                 </FXCollections>
             </items>
         </ComboBox>
