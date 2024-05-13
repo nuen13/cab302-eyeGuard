@@ -21,8 +21,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.io.IOException;
+import java.net.URL;
 
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -62,6 +64,7 @@ public class TimeAppController {
     // initialize timer
     @FXML
     private void initialize() {
+
         setBackgroundTheme ();
         // Initialize timer label
         newTime = 1;
@@ -83,11 +86,13 @@ public class TimeAppController {
     private void timerEnd(){
         if(breakTimePreset){
             alertText = "AAAAA .... Get Back To Workkkk";
+            playSound(ShareVarSetting.alertSound);
             breakTimePreset = false;
             newTime = 2;
         }
         else {
             alertText = "Ring Ring... It is time for a Break";
+            playSound(ShareVarSetting.alertSound);
             breakTimePreset = true;
             newTime = 4;
         }
@@ -314,12 +319,43 @@ public class TimeAppController {
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("setting-view.fxml"));
         Scene scene = new Scene((Parent)fxmlLoader.load(), 640.0, 360.0);
         stage.setScene(scene);
+
+        if (clip != null) {
+            clip.stop();
+            clip.close();
+        }
     }
 
     private void setBackgroundTheme (){
         BackgroundFill backgroundFill = new BackgroundFill(ShareVarSetting.themeColor, CornerRadii.EMPTY, Insets.EMPTY);
         Background background = new Background(backgroundFill);
         rootPane.setBackground(background);
+    }
+
+    private Clip clip;
+    private void playSound(URL soundURL) {
+        if (soundURL != null) {
+            try {
+                // Stop the previous sound if it's playing
+                if (clip != null) {
+                    clip.stop();
+                    clip.close();
+                }
+
+                // Load the audio file
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundURL);
+
+                // Get a sound clip resource
+                clip = AudioSystem.getClip();
+                clip.open(audioInputStream);
+
+                // Play the audio clip
+                clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
+                System.err.println("Error playing sound file: " + soundURL);
+            }
+        }
     }
 }
 

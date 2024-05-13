@@ -43,6 +43,11 @@ public class SettingController {
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("timer-view.fxml"));
         Scene scene = new Scene((Parent)fxmlLoader.load(), 640.0, 360.0);
         stage.setScene(scene);
+
+        if (clip != null) {
+            clip.stop();
+            clip.close();
+        }
     }
 
     @FXML //  fx:id="themeColor"
@@ -62,7 +67,7 @@ public class SettingController {
         });
         setBackgroundTheme(ShareVarSetting.themeColor);
 
-        alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> playSound(newVal));
+        alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> getSound(newVal));
     }
 
     private void setBackgroundTheme (Color color ){
@@ -94,7 +99,8 @@ public class SettingController {
     }
 
     private Clip clip;
-    private void playSound(String soundName) {
+
+    private void getSound(String soundName){
         if ("no sound".equals(soundName)) {
             // Stop the previous sound if it's playing
             if (clip != null) {
@@ -104,7 +110,11 @@ public class SettingController {
             return;
         }
 
-        if (soundName != null) {
+        ShareVarSetting.alertSound = getClass().getResource("/soundEffect/" + soundName + ".wav");
+        playSound(ShareVarSetting.alertSound);
+    }
+    private void playSound(URL soundURL) {
+        if (soundURL != null) {
             try {
                 // Stop the previous sound if it's playing
                 if (clip != null) {
@@ -113,7 +123,6 @@ public class SettingController {
                 }
 
                 // Load the audio file
-                URL soundURL = getClass().getResource("/soundEffect/" + soundName + ".wav");
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundURL);
 
                 // Get a sound clip resource
@@ -124,7 +133,7 @@ public class SettingController {
                 clip.start();
             } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
                 e.printStackTrace();
-                System.err.println("Error playing sound file: " + soundName);
+                System.err.println("Error playing sound file: " + soundURL);
             }
         }
     }
