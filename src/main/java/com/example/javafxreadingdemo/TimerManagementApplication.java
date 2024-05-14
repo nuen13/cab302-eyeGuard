@@ -8,57 +8,43 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import java.io.IOException;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import java.io.IOException;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.io.IOException;
 
 public class TimerManagementApplication extends Application {
     private Timeline timeline;
     private int secondsElapsed = 0;
     private int breakInterval = 60; // Default break interval in seconds
+    private int userId; // User ID of the logged-in user
 
-    private boolean breakIntervalSet = false; //Flag to track if break interval has been set.
+    private boolean breakIntervalSet = false; // Flag to track if break interval has been set.
 
     @FXML
     private Label timerLabel;
     @FXML
     private TextField breakIntervalField;
+
+    public TimerManagementApplication(int userId) {
+        this.userId = userId;
+    }
+
+    // Default constructor for Application launch
+    public TimerManagementApplication() {
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -69,6 +55,7 @@ public class TimerManagementApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
     @FXML
     private void initialize() {
         // Initialize timer label
@@ -86,14 +73,14 @@ public class TimerManagementApplication extends Application {
     }
 
     private void handleBreak() {
-        //Pause timeline and reset seconds before showing break message.
+        // Pause timeline and reset seconds before showing break message.
         timeline.pause();
         secondsElapsed = 0;
         updateTimerLabel();
 
         // Display an alert with the break message
         Platform.runLater(() -> {
-            Alert alert = new Alert(AlertType.INFORMATION);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Break Time");
             alert.setHeaderText(null);
             alert.setContentText("Ring Ring... It is time for a Break");
@@ -112,9 +99,8 @@ public class TimerManagementApplication extends Application {
     private void onStartButtonClicked(ActionEvent event) {
         if (breakIntervalSet) {
             timeline.play();
-        } else{
+        } else {
             showAlert("Start Error", "Please set the break interval before starting the timer.");
-
         }
     }
 
@@ -129,7 +115,7 @@ public class TimerManagementApplication extends Application {
         breakIntervalField.setText(""); // Clear the text field for break interval
         updateTimerLabel();
         timeline.stop();
-        breakIntervalSet = false; //Reset the flag as timer is reset
+        breakIntervalSet = false; // Reset the flag as timer is reset
     }
 
     @FXML
@@ -142,6 +128,7 @@ public class TimerManagementApplication extends Application {
             Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             currentStage.close();
             Analytics analytics = new Analytics();
+            analytics.setUserId(userId); // Pass the userId to Analytics
             Stage analyticsStage = new Stage();
             analytics.start(analyticsStage);
         } catch (Exception e) {
@@ -156,33 +143,37 @@ public class TimerManagementApplication extends Application {
             int newInterval = Integer.parseInt(breakIntervalField.getText());
             if (newInterval > 0) {
                 breakInterval = newInterval;
-                updateTimerLabel(); //Update the timer label
+                updateTimerLabel(); // Update the timer label
                 breakIntervalSet = true; // Update flag to indicate interval is set
             } else {
-                showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
-                breakIntervalSet = false; //Ensure flag is false if invalid input
+                showAlert("Invalid Input", "Break interval must be greater than zero."); // Handle invalid input (negative or zero)
+                breakIntervalSet = false; // Ensure flag is false if invalid input
             }
         } catch (NumberFormatException e) {
-            showAlert("Invalid Input", "Please enter a valid number.");// Handle invalid input (not a number)
-            breakIntervalSet = false; //Ensure flag is false if invalid input
+            showAlert("Invalid Input", "Please enter a valid number."); // Handle invalid input (not a number)
+            breakIntervalSet = false; // Ensure flag is false if invalid input
         }
     }
-    private void showAlert(String title, String content){
-        Alert alert = new Alert(AlertType.ERROR);
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
     }
+
     @FXML
     private Button setting;
+
     @FXML
     protected void gotosetting() throws IOException {
-        Stage stage = (Stage)this.setting.getScene().getWindow();
+        Stage stage = (Stage) this.setting.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("setting-view.fxml"));
-        Scene scene = new Scene((Parent)fxmlLoader.load(), 640.0, 360.0);
+        Scene scene = new Scene((Parent) fxmlLoader.load(), 640.0, 360.0);
         stage.setScene(scene);
     }
+
     public static void main(String[] args) {
         launch(args);
     }

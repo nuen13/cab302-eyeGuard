@@ -8,21 +8,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.regex.Pattern;
-import javax.swing.JOptionPane;
 
 public class LoginPage extends JFrame {
     private JTextField emailField;
     private JPasswordField passwordField;
+    private UserDAO userDAO;
+
     public LoginPage() {
         super("EYEGUARD Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(350, 500);
         setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(32, 34, 37));
+
+        userDAO = new UserDAO();
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -49,15 +50,14 @@ public class LoginPage extends JFrame {
         addLabelAndTextField(panel, "PASSWORD", 3);
         addButton(panel, "Login", 5);
         addButton(panel, "Forgot Password?", 6);
-        addSignUpButton(panel, "New to EyeGuard? Signup!", 7); // Modify this part to include redirection functionality
+        addSignUpButton(panel, "New to EyeGuard? Signup!", 7);
 
         add(panel);
         setVisible(true);
     }
 
     private Image resizeImage(BufferedImage originalImage, int width, int height) {
-        Image resultingImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        return resultingImage;
+        return originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
     }
 
     private void addLabelAndTextField(JPanel panel, String labelText, int gridy) {
@@ -84,7 +84,6 @@ public class LoginPage extends JFrame {
                     BorderFactory.createEmptyBorder(10, 10, 10, 10)));
             panel.add(emailField, constraints);
         } else if ("PASSWORD".equals(labelText)) {
-            // Assuming similar handling for passwordField
             passwordField = new JPasswordField(20);
             passwordField.setPreferredSize(new Dimension(280, 40));
             passwordField.setOpaque(false);
@@ -114,22 +113,24 @@ public class LoginPage extends JFrame {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Conditional to differentiate the button functionality based on the button text
                 if ("Login".equals(buttonText)) {
-                    if (validateInput()) { // Validate input fields before logging in
-                        dispose(); // Close the login window if input is valid
-                        // Initialize JavaFX Platform and launch the JavaFX application
-                        Platform.startup(() -> {
-                            TimerManagementApplication app = new TimerManagementApplication();
-                            try {
-                                app.start(new Stage()); // Start the JavaFX application
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        });
+                    if (validateInput()) {
+                        Integer userId = userDAO.validateUser(emailField.getText(), new String(passwordField.getPassword()));
+                        if (userId != null) {
+                            dispose(); // Close the login window if input is valid
+                            Platform.startup(() -> {
+                                TimerManagementApplication app = new TimerManagementApplication(userId);
+                                try {
+                                    app.start(new Stage()); // Start the JavaFX application
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                            });
+                        } else {
+                            JOptionPane.showMessageDialog(LoginPage.this, "Invalid email or password.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 } else if ("Forgot Password?".equals(buttonText)) {
-                    // Handle forgot password functionality here
                     JOptionPane.showMessageDialog(LoginPage.this, "Password reset feature is not implemented yet.");
                 }
             }
@@ -137,7 +138,6 @@ public class LoginPage extends JFrame {
         panel.add(button, constraints);
     }
 
-    // New method to add a SignUp button with action listener
     private void addSignUpButton(JPanel panel, String buttonText, int gridy) {
         JButton signUpButton = new JButton(buttonText);
         signUpButton.setFont(new Font("Arial", Font.BOLD, 12));
@@ -181,7 +181,6 @@ public class LoginPage extends JFrame {
     }
 
     public static void main(String[] args) {
-        Connection connection = DatabaseConnection.getInstance();
         SwingUtilities.invokeLater(LoginPage::new);
     }
 }

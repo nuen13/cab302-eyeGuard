@@ -6,9 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.regex.Pattern;
 
 public class SignUpPage extends JFrame {
@@ -16,7 +14,7 @@ public class SignUpPage extends JFrame {
     private JPasswordField passwordField;
     private JPasswordField confirmPasswordField;
 
-    private UserDAO userDAO; //DAO object for database operations
+    private UserDAO userDAO; // DAO object for database operations
 
     public SignUpPage() {
         super("Sign Up");
@@ -25,8 +23,8 @@ public class SignUpPage extends JFrame {
         setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(32, 34, 37));
 
-        userDAO = new UserDAO(); //initialise UserDAO
-        userDAO.createTable(); //Ensure table exists
+        userDAO = new UserDAO(); // Initialize UserDAO
+        userDAO.createTable(); // Ensure table exists
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -35,7 +33,6 @@ public class SignUpPage extends JFrame {
         constraints.weightx = 1;
         constraints.weighty = 1;
         constraints.insets = new Insets(10, 20, 10, 20);
-
 
         // Logo
         try {
@@ -151,7 +148,7 @@ public class SignUpPage extends JFrame {
         linkLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 dispose(); // Close the SignUpPage
-                new LoginPage().setVisible(true); // Open the com.example.javafxreadingdemo.LoginPage
+                new LoginPage().setVisible(true); // Open the LoginPage
             }
         });
         panel.add(linkLabel, constraints);
@@ -183,15 +180,13 @@ public class SignUpPage extends JFrame {
     private void signUpUser() {
         String email = emailField.getText();
         String password = new String(passwordField.getPassword());
-        if (validateInput()){ // If sign-up is successful
-            User newUser = new User(email, password); //Create a new user object
-            userDAO.insert(newUser); //insert the new user into the database
+        if (validateInput()) { // If sign-up is successful
+            User newUser = new User(email, password); // Create a new user object
+            userDAO.insert(newUser); // Insert the new user into the database
             JOptionPane.showMessageDialog(this, "Sign-up successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            dispose();  // Close the SignUpPage
-            new LoginPage().setVisible(true);  // Open the com.example.javafxreadingdemo.LoginPage
-
+            dispose(); // Close the SignUpPage
+            new LoginPage().setVisible(true); // Open the LoginPage
         }
-
     }
 
     public static void main(String[] args) {
