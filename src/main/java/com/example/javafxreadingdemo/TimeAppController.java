@@ -80,6 +80,9 @@ public class TimeAppController {
         newTime = 1;
         updateTimerTime(newTime);
 
+        worktime.setStyle("-fx-background-color: #66BB6A; -fx-text-fill: white; -fx-cursor: hand;");
+        breaktime.setStyle("");
+
         // Create timeline for the timer
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             secondsElapsed--;

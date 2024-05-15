@@ -41,8 +41,11 @@ public class SettingController {
     protected void backbutton() throws IOException {
         Stage stage = (Stage)this.back.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("timer-view.fxml"));
-        Scene scene = new Scene((Parent)fxmlLoader.load(), 640.0, 360.0);
+        Scene scene = new Scene((Parent)fxmlLoader.load(), 600.0, 400.0);
+
+        stage.setTitle("eyeGuard App");
         stage.setScene(scene);
+        stage.show();
 
         if (clip != null) {
             clip.stop();
