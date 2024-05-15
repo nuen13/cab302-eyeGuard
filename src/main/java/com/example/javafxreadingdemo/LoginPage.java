@@ -21,7 +21,7 @@ public class LoginPage extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(350, 500);
         setLocationRelativeTo(null);
-        getContentPane().setBackground(new Color(32, 34, 37));
+        getContentPane().setBackground(new Color(0, 9, 19));
 
         userDAO = new UserDAO();
 

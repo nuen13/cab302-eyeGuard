@@ -68,7 +68,7 @@ public class Analytics extends Application {
 
         HBox analyticsButtons = new HBox(10);
         analyticsButtons.setAlignment(Pos.CENTER);
-        Button hoursFocused = createAnalyticsButton("Hours Focused", "....");
+        Button hoursFocused = createAnalyticsButton("Time Focused", "....");
         Button daysAccessed = createAnalyticsButton("Days Accessed", "....");
         Button dayStreak = createAnalyticsButton("Day Streak", "....");
         analyticsButtons.getChildren().addAll(hoursFocused, daysAccessed, dayStreak);
@@ -90,7 +90,7 @@ public class Analytics extends Application {
         root.getChildren().addAll(topBar, analyticsButtons, timeSelection, lineChart);
 
         // Show the stage
-        Scene scene = new Scene(root, 700, 462);
+        Scene scene = new Scene(root, 725, 460);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         primaryStage.setTitle("Analytics");
         primaryStage.setScene(scene);
@@ -119,7 +119,7 @@ public class Analytics extends Application {
         yAxis.setLabel("Hours Focused");
 
         LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setTitle("Focus Hours");
+
         return lineChart;
     }
 
@@ -136,7 +136,7 @@ public class Analytics extends Application {
 
         // Create a new series to hold the data
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        series.setName("Focus Hours");
+        series.setName("Time Focused");
 
         // Determine the start date based on the selected period
         LocalDate today = LocalDate.now();
