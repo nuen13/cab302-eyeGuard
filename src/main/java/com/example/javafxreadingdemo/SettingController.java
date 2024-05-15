@@ -68,6 +68,7 @@ public class SettingController {
         setBackgroundTheme(ShareVarSetting.themeColor);
 
         alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> getSound(newVal));
+
     }
 
     private void setBackgroundTheme (Color color ){
@@ -78,6 +79,10 @@ public class SettingController {
     private void updateBackgroundColor(String colorName) {
         if (colorName != null) {
             switch (colorName) {
+                case "Default":
+                    ShareVarSetting.themeColor  = Color.rgb(0,9,19);
+                    setBackgroundTheme(ShareVarSetting.themeColor);
+                    break;
                 case "Summer":
                     ShareVarSetting.themeColor  = Color.LIGHTCORAL;
                     setBackgroundTheme(ShareVarSetting.themeColor);

@@ -18,16 +18,14 @@
             xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.javafxreadingdemo.TimeAppController">
     <children>
         <!-- Logo Label -->
-        <Label fx:id="logoText" layoutX="10" layoutY="10" text="eyeGuard" style="-fx-font-size: 18pt;"/>
 
         <!-- Tool buttons -->
         <Button fx:id="analytics" layoutX="300" layoutY="10" text="Analytics" onAction="#onAnalyticsButtonClicked"/>
         <Button fx:id="setting" layoutX="400" layoutY="10" text="Settings" onAction="#gotosetting"/>
-        <Button fx:id="account" layoutX="500" layoutY="10" text="Account"/>
 
         <!-- Time       -->
-        <Button fx:id="work" layoutX="150" layoutY="50" text="Work Time" onAction="#onworkTime"/>
-        <Button fx:id="break" layoutX="300" layoutY="50" text="Break Time" onAction="#onbreakTime"/>
+        <Button fx:id="worktime" layoutX="150" layoutY="50" text="Work Time" onAction="#onworkTime"/>
+        <Button fx:id="breaktime" layoutX="300" layoutY="50" text="Break Time" onAction="#onbreakTime"/>
 
 
 
@@ -42,11 +40,11 @@
 
 
         <!-- Time Settings -->
-<!--        <TextField fx:id="breakIntervalField" layoutX="10" layoutY="170" prefWidth="180" promptText="Enter break interval in seconds"/>-->
-<!--        <Button layoutX="200" layoutY="170" text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>-->
+        <!--        <TextField fx:id="breakIntervalField" layoutX="10" layoutY="170" prefWidth="180" promptText="Enter break interval in seconds"/>-->
+        <!--        <Button layoutX="200" layoutY="170" text="Set Break Interval" onAction="#onSetBreakIntervalButtonClicked"/>-->
 
         <!-- Timer and Action Buttons -->
         <Button fx:id="startBtn" layoutX="250" layoutY="200" text="Start" onAction="#StartTime"/>
-<!--        <Button fx:id="reset" layoutX="300" layoutY="200" text="Reset" onAction="#onResetButtonClicked"/>-->
+        <!--        <Button fx:id="reset" layoutX="300" layoutY="200" text="Reset" onAction="#onResetButtonClicked"/>-->
     </children>
 </AnchorPane>
