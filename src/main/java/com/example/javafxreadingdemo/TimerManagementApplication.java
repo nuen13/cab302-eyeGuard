@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class TimerManagementApplication extends Application {
     private Timeline timeline;
@@ -28,6 +29,7 @@ public class TimerManagementApplication extends Application {
     private int userId; // User ID of the logged-in user
 
     private boolean breakIntervalSet = false; // Flag to track if break interval has been set.
+    private UserDAO userDAO;
 
     @FXML
     private Label timerLabel;
@@ -50,6 +52,8 @@ public class TimerManagementApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("timer-view.fxml"));
         VBox root = fxmlLoader.load();
+        TimerManagementApplication controller = fxmlLoader.getController();
+        controller.setUserId(this.userId); // Ensure userId is set in the controller
         Scene scene = new Scene(root, 320, 240);
         stage.setTitle("eyeGuard App");
         stage.setScene(scene);
@@ -58,6 +62,7 @@ public class TimerManagementApplication extends Application {
 
     @FXML
     private void initialize() {
+        userDAO = new UserDAO();
         // Initialize timer label
         updateTimerLabel();
 
@@ -75,6 +80,7 @@ public class TimerManagementApplication extends Application {
     private void handleBreak() {
         // Pause timeline and reset seconds before showing break message.
         timeline.pause();
+        saveFocusSession(); // Save the session when the break is handled
         secondsElapsed = 0;
         updateTimerLabel();
 
@@ -107,10 +113,12 @@ public class TimerManagementApplication extends Application {
     @FXML
     private void onPauseButtonClicked(ActionEvent event) {
         timeline.pause();
+        saveFocusSession(); // Save the session when the timer is paused
     }
 
     @FXML
     private void onResetButtonClicked(ActionEvent event) {
+        saveFocusSession(); // Save the session when the timer is reset
         secondsElapsed = 0;
         breakIntervalField.setText(""); // Clear the text field for break interval
         updateTimerLabel();
@@ -152,6 +160,13 @@ public class TimerManagementApplication extends Application {
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter a valid number."); // Handle invalid input (not a number)
             breakIntervalSet = false; // Ensure flag is false if invalid input
+        }
+    }
+
+    private void saveFocusSession() {
+        if (secondsElapsed > 0 && userId > 0) {
+            userDAO.insertFocusSession(userId, LocalDate.now(), secondsElapsed);
+            secondsElapsed = 0;
         }
     }
 

@@ -8,7 +8,8 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -42,10 +43,11 @@ public class Analytics extends Application {
 
         // Top part of the interface using a BorderPane
         BorderPane topBar = new BorderPane();
-        Label titleLabel = new Label("Analytics");
-        titleLabel.setId("titleLabel");
-        topBar.setCenter(titleLabel);
-        BorderPane.setAlignment(titleLabel, Pos.CENTER);
+        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/Logo/Logo.jpg.png"  )));
+        logoView.setFitHeight(100);  // Increase the height for a bigger image
+        logoView.setPreserveRatio(true);
+        topBar.setCenter(logoView);
+        BorderPane.setAlignment(logoView, Pos.CENTER);
 
         Button backButton = new Button("Back");
         backButton.setId("backButton");
@@ -74,13 +76,13 @@ public class Analytics extends Application {
         // Bottom part of the interface - Time selection
         HBox timeSelection = new HBox(10);
         timeSelection.setAlignment(Pos.CENTER);
-        Button weekButton = new Button("Week");
-        weekButton.setId("weekButton");
-        Button monthButton = new Button("Month");
-        monthButton.setId("monthButton");
-        Button yearButton = new Button("Year");
-        yearButton.setId("yearButton");
-        timeSelection.getChildren().addAll(weekButton, monthButton, yearButton);
+        Button minutesButton = new Button("Minutes");
+        minutesButton.setId("minutesButton");
+        Button hoursButton = new Button("Hours");
+        hoursButton.setId("hoursButton");
+        Button daysButton = new Button("Days");
+        daysButton.setId("daysButton");
+        timeSelection.getChildren().addAll(minutesButton, hoursButton, daysButton);
 
         // Content area - Graph
         lineChart = createLineChart();
@@ -88,19 +90,19 @@ public class Analytics extends Application {
         root.getChildren().addAll(topBar, analyticsButtons, timeSelection, lineChart);
 
         // Show the stage
-        Scene scene = new Scene(root, 500, 462);
+        Scene scene = new Scene(root, 700, 462);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         primaryStage.setTitle("Analytics");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Load the focus sessions data for the default view (e.g., month)
-        loadFocusSessionsData("Month");
+        // Load the focus sessions data for the default view (e.g., Hours)
+        loadFocusSessionsData("Hours");
 
         // Set button actions
-        weekButton.setOnAction(event -> loadFocusSessionsData("Week"));
-        monthButton.setOnAction(event -> loadFocusSessionsData("Month"));
-        yearButton.setOnAction(event -> loadFocusSessionsData("Year"));
+        minutesButton.setOnAction(event -> loadFocusSessionsData("Minutes"));
+        hoursButton.setOnAction(event -> loadFocusSessionsData("Hours"));
+        daysButton.setOnAction(event -> loadFocusSessionsData("Days"));
     }
 
     private Button createAnalyticsButton(String text, String value) {
@@ -113,7 +115,7 @@ public class Analytics extends Application {
     private LineChart<Number, Number> createLineChart() {
         xAxis = new NumberAxis();
         yAxis = new NumberAxis();
-        xAxis.setLabel("Days");
+        xAxis.setLabel("Focus Sessions"); // Updated X-axis label
         yAxis.setLabel("Hours Focused");
 
         LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
@@ -139,43 +141,43 @@ public class Analytics extends Application {
         // Determine the start date based on the selected period
         LocalDate today = LocalDate.now();
         LocalDate startDate = today;
-        if (period.equals("Week")) {
-            startDate = today.minusDays(6);
-        } else if (period.equals("Month")) {
-            startDate = today.minusDays(29);
-        } else if (period.equals("Year")) {
-            startDate = today.minusDays(364);
+        if (period.equals("Minutes")) {
+            startDate = today.minusDays(0); // For the sake of demonstration, we can consider only today
+        } else if (period.equals("Hours")) {
+            startDate = today.minusDays(6); // Last 7 days
+        } else if (period.equals("Days")) {
+            startDate = today.minusDays(29); // Last 30 days
         }
 
         // Find min and max values for the axes
         double maxDuration = 0;
-        long minDay = Long.MAX_VALUE;
-        long maxDay = Long.MIN_VALUE;
+        long minTime = Long.MAX_VALUE;
+        long maxTime = Long.MIN_VALUE;
 
         for (FocusSession session : focusSessions) {
             LocalDate sessionDate = session.getSessionDate();
             if (!sessionDate.isBefore(startDate) && !sessionDate.isAfter(today)) {
                 int focusDuration = session.getFocusDuration();
-                long day = sessionDate.toEpochDay() - startDate.toEpochDay();
-                series.getData().add(new XYChart.Data<>(day, focusDuration / 60.0)); // Convert minutes to hours
+                long time = sessionDate.toEpochDay() - startDate.toEpochDay();
+                series.getData().add(new XYChart.Data<>(time, focusDuration / 60.0)); // Convert minutes to hours
 
                 if (focusDuration / 60.0 > maxDuration) {
                     maxDuration = focusDuration / 60.0;
                 }
-                if (day < minDay) {
-                    minDay = day;
+                if (time < minTime) {
+                    minTime = time;
                 }
-                if (day > maxDay) {
-                    maxDay = day;
+                if (time > maxTime) {
+                    maxTime = time;
                 }
             }
         }
 
         // Adjust the axes based on the data
         xAxis.setAutoRanging(false);
-        xAxis.setLowerBound(minDay);
-        xAxis.setUpperBound(maxDay);
-        xAxis.setTickUnit((maxDay - minDay) / 10.0);
+        xAxis.setLowerBound(minTime);
+        xAxis.setUpperBound(maxTime);
+        xAxis.setTickUnit((maxTime - minTime) / 10.0);
 
         yAxis.setAutoRanging(false);
         yAxis.setLowerBound(0);
