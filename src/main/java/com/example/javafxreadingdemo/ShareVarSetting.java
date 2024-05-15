@@ -16,6 +16,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.net.URL;
 
 public class ShareVarSetting {
-    public static Color themeColor = Color.WHITE;
+    public static Color themeColor = Color.rgb(0,9,19);
     public static URL alertSound;
 }

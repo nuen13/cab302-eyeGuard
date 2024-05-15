@@ -31,6 +31,9 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.Scene;
 
 public class TimeAppController {
 
@@ -51,7 +54,13 @@ public class TimeAppController {
     @FXML
     private Button startBtn;
     @FXML
+    private Button analytics;
+    @FXML
     private Button lowBtn;
+    @FXML
+    private Button worktime;
+    @FXML
+    private Button breaktime;
     @FXML
     private Button midBtn;
     @FXML
@@ -66,6 +75,7 @@ public class TimeAppController {
     private void initialize() {
 
         setBackgroundTheme ();
+        addLogoToLayout();
         // Initialize timer label
         newTime = 1;
         updateTimerTime(newTime);
@@ -74,12 +84,51 @@ public class TimeAppController {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             secondsElapsed--;
             if (secondsElapsed % timeInterval == 0) {
-                 // Call method to handle break
+                // Call method to handle break
                 timerEnd();
             }
             updateTimerLabel();
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
+
+        AnchorPane.setTopAnchor(startBtn, 320.0);
+        AnchorPane.setTopAnchor(lowBtn, 150.0);
+        AnchorPane.setTopAnchor(midBtn, 150.0);
+        AnchorPane.setTopAnchor(highBtn, 150.0);
+        AnchorPane.setTopAnchor(setting, 5.0);
+        AnchorPane.setTopAnchor(timerLabel, 200.0);
+        AnchorPane.setRightAnchor(setting, 5.0);
+        AnchorPane.setTopAnchor(analytics, 40.0);
+        AnchorPane.setRightAnchor(analytics, 5.0);
+        AnchorPane.setTopAnchor(worktime, 110.0);
+        AnchorPane.setRightAnchor(worktime, 330.0);
+        AnchorPane.setTopAnchor(breaktime, 110.0);
+        AnchorPane.setRightAnchor(breaktime, 193.0);
+        AnchorPane.setRightAnchor(startBtn, 280.0);
+
+        startBtn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
+        lowBtn.setStyle("-fx-background-color: #212121; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
+        midBtn.setStyle("-fx-background-color: #212121; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
+        highBtn.setStyle("-fx-background-color: #212121; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
+
+
+    }
+
+    private ImageView createLogoImageView() {
+        Image image = new Image(getClass().getResourceAsStream("/Logo/Logo.jpg.png"));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(200);  // Set desired width
+        imageView.setFitHeight(100); // Set desired height
+        imageView.setPreserveRatio(true);
+        return imageView;
+    }
+
+    private void addLogoToLayout() {
+        ImageView logoView = createLogoImageView();
+        AnchorPane.setTopAnchor(logoView, 10.0);  // Positioning from the top of the AnchorPane
+        AnchorPane.setLeftAnchor(logoView, 205.0);  // Align left edge to the AnchorPane's left edge
+        AnchorPane.setRightAnchor(logoView, 0.0); // Align right edge to the AnchorPane's right edge
+        rootPane.getChildren().add(logoView);
     }
 
     private String alertText = "";
@@ -185,11 +234,15 @@ public class TimeAppController {
             lowBtn.setText("Short break (10 mins)");
             midBtn.setText("Long break (25 mins)");
             highBtn.setText("Nappie (1 hour)");
+            breaktime.setStyle("-fx-background-color: #66BB6A; -fx-text-fill: white; -fx-cursor: hand;");
+            worktime.setStyle("");
         }
         else {
             lowBtn.setText("Bursts (30 mins)");
             midBtn.setText("Grind (45 mins)");
             highBtn.setText("Cram (1 hour)");
+            worktime.setStyle("-fx-background-color: #66BB6A; -fx-text-fill: white; -fx-cursor: hand;");
+            breaktime.setStyle("");
 
         }
     };
@@ -271,7 +324,7 @@ public class TimeAppController {
     @FXML
     private void onLowClicked(ActionEvent event){
         if (!breakTimePreset){
-            newTime= 1;
+            newTime= 1800;
         } else {
             newTime= 600;
         }
@@ -317,7 +370,7 @@ public class TimeAppController {
     protected void gotosetting() throws IOException {
         Stage stage = (Stage)this.setting.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("setting-view.fxml"));
-        Scene scene = new Scene((Parent)fxmlLoader.load(), 640.0, 360.0);
+        Scene scene = new Scene((Parent)fxmlLoader.load(), 180.0, 200.0);
         stage.setScene(scene);
 
         if (clip != null) {
