@@ -1,7 +1,9 @@
 package com.example.javafxreadingdemo;
 
 import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class UserDAO {
                     "CREATE TABLE IF NOT EXISTS focus_sessions (" +
                             "session_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "user_id INTEGER, " +
-                            "session_date DATE, " +
+                            "session_date BIGINT, " + // Store as Unix timestamp
                             "focus_duration INTEGER, " +
                             "FOREIGN KEY(user_id) REFERENCES users(id))"
             );
@@ -195,10 +197,11 @@ public class UserDAO {
     }
 
     public void insertFocusSession(int userId, LocalDate sessionDate, int duration) {
+        long sessionDateAsLong = sessionDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
         try (PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO focus_sessions (user_id, session_date, focus_duration) VALUES (?, ?, ?)")) {
             statement.setInt(1, userId);
-            statement.setDate(2, Date.valueOf(sessionDate));
+            statement.setLong(2, sessionDateAsLong);
             statement.setInt(3, duration);
             statement.executeUpdate();
         } catch (SQLException ex) {
@@ -213,10 +216,12 @@ public class UserDAO {
             statement.setInt(1, userId);
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
+                    long sessionDateAsLong = rs.getLong("session_date");
+                    LocalDate sessionDate = Instant.ofEpochSecond(sessionDateAsLong).atZone(ZoneId.systemDefault()).toLocalDate();
                     FocusSession session = new FocusSession(
                             rs.getInt("session_id"),
                             userId,
-                            rs.getDate("session_date").toLocalDate(),
+                            sessionDate,
                             rs.getInt("focus_duration")
                     );
                     sessions.add(session);
@@ -226,6 +231,48 @@ public class UserDAO {
             System.err.println("Error retrieving focus sessions: " + ex.getMessage());
         }
         return sessions;
+    }
+
+    public String getDayStreak(int userId) {
+        String query = "SELECT day_streak FROM users WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("day_streak") + " Days";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "0 Days";
+    }
+
+    public int getTotalFocusDuration(int userId) {
+        String query = "SELECT SUM(focus_duration) AS total_focus_duration FROM focus_sessions WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("total_focus_duration");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public String getDaysAccessed(int userId) {
+        String query = "SELECT COUNT(DISTINCT session_date) AS days_accessed FROM focus_sessions WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("days_accessed") + " Days";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "0 Days";
     }
 
     public void close() {

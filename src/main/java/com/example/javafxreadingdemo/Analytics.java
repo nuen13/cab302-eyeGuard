@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Analytics extends Application {
 
@@ -43,7 +44,7 @@ public class Analytics extends Application {
 
         // Top part of the interface using a BorderPane
         BorderPane topBar = new BorderPane();
-        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/Logo/Logo.jpg.png"  )));
+        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/Logo/Logo.jpg.png")));
         logoView.setFitHeight(100);  // Increase the height for a bigger image
         logoView.setPreserveRatio(true);
         topBar.setCenter(logoView);
@@ -68,10 +69,16 @@ public class Analytics extends Application {
 
         HBox analyticsButtons = new HBox(10);
         analyticsButtons.setAlignment(Pos.CENTER);
-        Button hoursFocused = createAnalyticsButton("Time Focused", "....");
-        Button daysAccessed = createAnalyticsButton("Days Accessed", "....");
-        Button dayStreak = createAnalyticsButton("Day Streak", "....");
-        analyticsButtons.getChildren().addAll(hoursFocused, daysAccessed, dayStreak);
+
+        // Fetch data from the database
+        String dayStreak = userDAO.getDayStreak(loggedInUserId);
+        String timeFocused = formatTime(userDAO.getTotalFocusDuration(loggedInUserId));
+        String daysAccessed = userDAO.getDaysAccessed(loggedInUserId);
+
+        Button hoursFocused = createAnalyticsButton("Time Focused:", timeFocused);
+        Button daysAccessedButton = createAnalyticsButton("Days Accessed:", daysAccessed);
+        Button dayStreakButton = createAnalyticsButton("Day Streak:", dayStreak);
+        analyticsButtons.getChildren().addAll(hoursFocused, daysAccessedButton, dayStreakButton);
 
         // Bottom part of the interface - Time selection
         HBox timeSelection = new HBox(10);
@@ -119,7 +126,7 @@ public class Analytics extends Application {
         yAxis.setLabel("Hours Focused");
 
         LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-
+        lineChart.setTitle("Focus Hours");
         return lineChart;
     }
 
@@ -186,6 +193,15 @@ public class Analytics extends Application {
 
         // Add the series to the chart
         lineChart.getData().add(series);
+    }
+
+    private String formatTime(int totalSeconds) {
+        long days = TimeUnit.SECONDS.toDays(totalSeconds);
+        long hours = TimeUnit.SECONDS.toHours(totalSeconds) % 24;
+        long minutes = TimeUnit.SECONDS.toMinutes(totalSeconds) % 60;
+        long seconds = totalSeconds % 60;
+
+        return String.format("%d Days %d Hours %d Minutes %d Seconds", days, hours, minutes, seconds);
     }
 
     public static void main(String[] args) {
