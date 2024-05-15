@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.StackPane?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="205.0" prefWidth="168.0" styleClass="layout" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.javafxreadingdemo.SettingController">
+    <Label text = "Setting" />
+    <children>
+        <Button fx:id="back" text="Back" onAction="#backbutton"/>
+        <ComboBox fx:id="themeColor" layoutX="15.0" layoutY="50.0" prefWidth="90.0" promptText="choose">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Default"/>
+                    <String fx:value="Spring"/>
+                    <String fx:value="Summer" />
+                    <String fx:value="Autumn" />
+                    <String fx:value="Winter" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+        <Label id="themeColor" layoutX="15.0" layoutY="30.0" styleClass="bold-label" text="Theme" />
+
+        <ComboBox fx:id="alarmSound" layoutX="15.0" layoutY="120.0" prefWidth="90.0" promptText="choose">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="bird" />
+                    <String fx:value="bus" />
+                    <String fx:value="no sound"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+        <Label id="alarmSound" layoutX="15.0" layoutY="100.0" styleClass="bold-label" text="Alarm Sound" />
+    </children>
+
+</AnchorPane>

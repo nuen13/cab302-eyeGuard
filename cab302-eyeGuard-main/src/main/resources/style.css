@@ -1,0 +1,74 @@
+.root {
+    -fx-background-color: #2c3e50;
+}
+
+.button {
+    -fx-background-radius: 20;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 10, 0 , 0 , 3 );
+}
+
+.startBtn {
+    -fx-background-color: #4CAF50; /* Green */
+    -fx-text-fill: white; /* White text color */
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px; /* Padding around the text */
+    -fx-background-radius: 5px; /* Rounded corners */
+    -fx-border-radius: 5px; /* Rounded corners */
+    -fx-cursor: hand; /* Change cursor on hover */
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+}
+
+.startBtn:hover {
+    -fx-background-color: #45a049; /* Darker green on hover */
+}
+
+.startBtn:pressed {
+    -fx-background-color: #388E3C; /* Even darker green when pressed */
+}
+
+
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+
+#titleLabel {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1c40f; /* Gold color for the Analytics title */
+}
+
+.analytics-button {
+    -fx-background-color: #34495e; /* Dark blue for the button background */
+    -fx-padding: 15 30; /* Top/bottom, right/left padding */
+    -fx-background-insets: 0;
+}
+
+.time-selection-button {
+    -fx-background-color: #16a085; /* Some color for time selection buttons */
+    -fx-padding: 10 20;
+}
+
+#weekButton {
+    -fx-background-color: #3498db; /* Different color for Week button */
+}
+
+#monthButton {
+    -fx-background-color: #9b59b6; /* Different color for Month button */
+}
+
+#yearButton {
+    -fx-background-color: #e74c3c; /* Different color for Year button */
+}
+
+.content-area {
+    -fx-fill: #ecf0f1; /* Light gray background for content area */
+    -fx-stroke: #bdc3c7; /* Slightly darker gray for the border */
+    -fx-stroke-width: 2;
+    -fx-arc-width: 20;
+    -fx-arc-height: 20;
+}
