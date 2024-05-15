@@ -6,15 +6,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
+
+
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import javafx.scene.paint.Color;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
 import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
 
 import javafx.scene.control.ComboBox;
 
@@ -28,8 +31,10 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import java.net.URL;
 
+
 public class SettingController {
 
+    private Color newColor;
     @FXML
     private Button back;
     @FXML
@@ -38,6 +43,11 @@ public class SettingController {
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("timer-view.fxml"));
         Scene scene = new Scene((Parent)fxmlLoader.load(), 640.0, 360.0);
         stage.setScene(scene);
+
+        if (clip != null) {
+            clip.stop();
+            clip.close();
+        }
     }
 
     @FXML //  fx:id="themeColor"
@@ -51,34 +61,46 @@ public class SettingController {
 
     @FXML
     public void initialize() {
+
         themeColor.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             updateBackgroundColor(newVal);
         });
+        setBackgroundTheme(ShareVarSetting.themeColor);
 
-        alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> playSound(newVal));
+        alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> getSound(newVal));
     }
 
+    private void setBackgroundTheme (Color color ){
+        BackgroundFill backgroundFill = new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY);
+        Background background = new Background(backgroundFill);
+        rootPane.setBackground(background);
+    }
     private void updateBackgroundColor(String colorName) {
         if (colorName != null) {
             switch (colorName) {
                 case "Summer":
-                    rootPane.setBackground(new Background(new BackgroundFill(Color.LIGHTYELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+                    ShareVarSetting.themeColor  = Color.LIGHTCORAL;
+                    setBackgroundTheme(ShareVarSetting.themeColor);
                     break;
                 case "Autumn":
-                    rootPane.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+                    ShareVarSetting.themeColor = newColor = Color.LIGHTGOLDENRODYELLOW;
+                    setBackgroundTheme(ShareVarSetting.themeColor);
                     break;
                 case "Winter":
-                    rootPane.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+                    ShareVarSetting.themeColor = newColor = Color.LIGHTBLUE;
+                    setBackgroundTheme(ShareVarSetting.themeColor);
                     break;
                 case "Spring":
-                    rootPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+                    ShareVarSetting.themeColor = newColor = Color.LIGHTGREEN;
+                    setBackgroundTheme(ShareVarSetting.themeColor);
                     break;
             }
         }
     }
 
     private Clip clip;
-    private void playSound(String soundName) {
+
+    private void getSound(String soundName){
         if ("no sound".equals(soundName)) {
             // Stop the previous sound if it's playing
             if (clip != null) {
@@ -88,7 +110,11 @@ public class SettingController {
             return;
         }
 
-        if (soundName != null) {
+        ShareVarSetting.alertSound = getClass().getResource("/soundEffect/" + soundName + ".wav");
+        playSound(ShareVarSetting.alertSound);
+    }
+    private void playSound(URL soundURL) {
+        if (soundURL != null) {
             try {
                 // Stop the previous sound if it's playing
                 if (clip != null) {
@@ -97,7 +123,6 @@ public class SettingController {
                 }
 
                 // Load the audio file
-                URL soundURL = getClass().getResource("/soundEffect/" + soundName + ".wav");
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundURL);
 
                 // Get a sound clip resource
@@ -108,7 +133,7 @@ public class SettingController {
                 clip.start();
             } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
                 e.printStackTrace();
-                System.err.println("Error playing sound file: " + soundName);
+                System.err.println("Error playing sound file: " + soundURL);
             }
         }
     }
