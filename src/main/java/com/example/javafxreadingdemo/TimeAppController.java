@@ -35,22 +35,30 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.Scene;
 
-public class TimeAppController {
+import java.time.LocalDate;
+import java.net.URL;
 
+
+public class TimeAppController {
     private Timeline timeline;
     private int secondsElapsed = 0;
     private int timeInterval = 60; // Default break interval in seconds
-    private boolean timerSet = false; //Flag to track if break interval has been set.
+    private boolean timerSet = false; // Flag to track if break interval has been set
     private boolean startActive = false;
     private boolean onstartBtn = true;
     private int timeInMinute = 0;
+    private int newTime = 0;
+    private boolean timerRun = false;
+    private boolean breakTimePreset = false;
+    private UserDAO userDAO;
+    private int userId;
+
     @FXML
     private Label timerLabel;
     @FXML
     private TextField timeIntervalField;
     @FXML
     private AnchorPane rootPane;
-    private int newTime = 0;
     @FXML
     private Button startBtn;
     @FXML
@@ -66,13 +74,26 @@ public class TimeAppController {
     @FXML
     private Button highBtn;
 
-    private boolean timerRun = false;
 
-    private boolean breakTimePreset = false;
 
-    // initialize timer
+
+    // Constructor with userId
+    public TimeAppController(int userId) {
+        this.userId = userId;
+    }
+
+    // Default constructor for Application launch
+    public TimeAppController() {
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     @FXML
     private void initialize() {
+
+        userDAO = new UserDAO();
 
         setBackgroundTheme ();
         addLogoToLayout();
@@ -134,6 +155,13 @@ public class TimeAppController {
         rootPane.getChildren().add(logoView);
     }
 
+    private void saveFocusSession() {
+        if (secondsElapsed > 0 && userId > 0) {
+            userDAO.insertFocusSession(userId, LocalDate.now(), secondsElapsed);
+            secondsElapsed = 0;
+        }
+    }
+
     private String alertText = "";
     private void timerEnd(){
         if(breakTimePreset){
@@ -141,12 +169,16 @@ public class TimeAppController {
             playSound(ShareVarSetting.alertSound);
             breakTimePreset = false;
             newTime = 2;
+
+            saveFocusSession();
         }
         else {
             alertText = "Ring Ring... It is time for a Break";
             playSound(ShareVarSetting.alertSound);
             breakTimePreset = true;
             newTime = 4;
+
+            saveFocusSession();
         }
         handleBreak();
         changeTimePreset(breakTimePreset);
@@ -287,13 +319,10 @@ public class TimeAppController {
     @FXML
     private void onAnalyticsButtonClicked(ActionEvent event) {
         try {
-            // Close the current stage if you want to open analytics in the same window
-            // ((Stage)timerLabel.getScene().getWindow()).close();
-
-            // Open the analytics in a new window
             Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             currentStage.close();
             Analytics analytics = new Analytics();
+            analytics.setUserId(userId);
             Stage analyticsStage = new Stage();
             analytics.start(analyticsStage);
         } catch (Exception e) {
