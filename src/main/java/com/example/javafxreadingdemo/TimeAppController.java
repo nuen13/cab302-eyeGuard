@@ -37,6 +37,7 @@ import javafx.scene.Scene;
 
 import java.time.LocalDate;
 import java.net.URL;
+import java.util.List;
 
 
 public class TimeAppController {
@@ -74,12 +75,20 @@ public class TimeAppController {
     @FXML
     private Button highBtn;
 
+    @FXML
+    private Button customBtn;
+
+    private CustomSettingDAO customSettingDAO;
+
 
 
 
     // Constructor with userId
     public TimeAppController(int userId) {
+
+
         this.userId = userId;
+
     }
 
     // Default constructor for Application launch
@@ -92,8 +101,12 @@ public class TimeAppController {
 
     @FXML
     private void initialize() {
+        customSettingDAO = new CustomSettingDAO();
+        customSettingDAO.createCustomSettingTable();
 
         userDAO = new UserDAO();
+
+
 
         setBackgroundTheme ();
         addLogoToLayout();
@@ -119,6 +132,7 @@ public class TimeAppController {
         AnchorPane.setTopAnchor(lowBtn, 150.0);
         AnchorPane.setTopAnchor(midBtn, 150.0);
         AnchorPane.setTopAnchor(highBtn, 150.0);
+        AnchorPane.setTopAnchor(customBtn, 150.0);
         AnchorPane.setTopAnchor(setting, 5.0);
         AnchorPane.setTopAnchor(timerLabel, 200.0);
         AnchorPane.setRightAnchor(setting, 5.0);
@@ -134,6 +148,7 @@ public class TimeAppController {
         lowBtn.setStyle("-fx-background-color: #212121; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
         midBtn.setStyle("-fx-background-color: #212121; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
         highBtn.setStyle("-fx-background-color: #212121; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
+        customBtn.setStyle("-fx-background-color: #212121; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
 
 
     }
@@ -266,8 +281,8 @@ public class TimeAppController {
 
     private void changeTimePreset(boolean breakTimePreset){
         if(breakTimePreset){
-            lowBtn.setText("Short break (10 mins)");
-            midBtn.setText("Long break (25 mins)");
+            lowBtn.setText("Short (10 mins)");
+            midBtn.setText("Long (25 mins)");
             highBtn.setText("Nappie (1 hour)");
             breaktime.setStyle("-fx-background-color: #66BB6A; -fx-text-fill: white; -fx-cursor: hand;");
             worktime.setStyle("");
@@ -402,12 +417,29 @@ public class TimeAppController {
     protected void gotosetting() throws IOException {
         Stage stage = (Stage)this.setting.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("setting-view.fxml"));
-        Scene scene = new Scene((Parent)fxmlLoader.load(), 180.0, 200.0);
+        Scene scene = new Scene((Parent)fxmlLoader.load(), 600, 400);
+
+        scene.getStylesheets().add(TimerManagementApplication.class.getResource("/SettingStyle.css").toExternalForm());
         stage.setScene(scene);
 
         if (clip != null) {
             clip.stop();
             clip.close();
+        }
+    }
+
+    // Get Custom Setting
+
+
+    public void loadCustomSetting(int userId) {
+        List<CustomSetting> customSettings = customSettingDAO.getCustomSetting(userId);
+        System.out.println(userId);
+        for (CustomSetting setting : customSettings) {
+            // Print out additional properties if needed
+            System.out.println("Theme Color: " + setting.getThemeColor());
+            System.out.println("Sound Alert: " + setting.getSoundAlert());
+            System.out.println("Break Time: " + setting.getBreakTime());
+            System.out.println("Work Time: " + setting.getWorkTime());
         }
     }
 
@@ -443,4 +475,3 @@ public class TimeAppController {
         }
     }
 }
-

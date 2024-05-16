@@ -28,6 +28,7 @@ public class TimerManagementApplication extends Application {
 
         // Get the controller and set the userId
         TimeAppController controller = fxmlLoader.getController();
+        System.out.println("asaaa " + userId);
         controller.setUserId(userId);
 
         Scene scene = new Scene(root, 600.0, 400.0);

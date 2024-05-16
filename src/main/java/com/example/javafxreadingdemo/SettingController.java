@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 
-
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -30,13 +30,43 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import java.net.URL;
+import java.time.LocalDate;
+
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 public class SettingController {
 
+    private CustomSettingDAO CustomSettingDAO;
+
+    private Button breakTimeC;
     private Color newColor;
     @FXML
     private Button back;
+
+
     @FXML
     protected void backbutton() throws IOException {
         Stage stage = (Stage)this.back.getScene().getWindow();
@@ -62,9 +92,13 @@ public class SettingController {
     @FXML
     private AnchorPane rootPane;
 
+
+
     @FXML
     public void initialize() {
 
+
+        themeColor.getSelectionModel().select(ShareVarSetting.colorActive);
         themeColor.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             updateBackgroundColor(newVal);
         });
@@ -72,7 +106,57 @@ public class SettingController {
 
         alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> getSound(newVal));
 
+        System.out.println(ShareVarSetting.colorActive);
     }
+
+    // Get Custom Timer
+    // Retrieve Custom Timer and Send it to Db
+    // WorkTime
+
+
+
+//    private void onSettimeIntervalButtonClicked(ActionEvent event) {
+//        try {
+//            int newInterval = Integer.parseInt(timeIntervalField.getText());
+//            if (newInterval > 0) {
+//                timeInterval = newInterval;
+//                timeInMinute = Integer.parseInt(timeIntervalField.getText());
+//                updateTimerLabel(); //Update the timer label
+//                timerSet = true; // Update flag to indicate interval is set
+//            } else {
+//                showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
+//                timerSet = false; //Ensure flag is false if invalid input
+//            }
+//        } catch (NumberFormatException e) {
+//            showAlert("Invalid Input", "Please enter a valid number.");// Handle invalid input (not a number)
+//            timerSet = false; //Ensure flag is false if invalid input
+//        }
+//    }
+
+    private TextField textFieldBreak;
+//    @FXML
+//    private void c_breakTimeClicked(ActionEvent event){
+//        try {
+//            int customTime = Integer.parseInt(textFieldBreak.getText());
+//            if (customTime > 0) {
+//                CustomSettingDAO.retrieveTimeSetting(customTime);
+//            } else {
+//                showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
+//            }
+//        } catch (NumberFormatException e) {
+//            showAlert("Invalid Input", "Please enter a valid number.");// Handle invalid input (not a number)
+//            timerSet = false; //Ensure flag is false if invalid input
+//        }
+//    }
+
+//    private void getBreakTime_c() {
+//        if (secondsElapsed > 0 && userId > 0) {
+//            userDAO.insertFocusSession(userId, LocalDate.now(), secondsElapsed);
+//            secondsElapsed = 0;
+//        }
+//    }
+
+
 
     private void setBackgroundTheme (Color color ){
         BackgroundFill backgroundFill = new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY);
@@ -85,22 +169,27 @@ public class SettingController {
                 case "Default":
                     ShareVarSetting.themeColor  = Color.rgb(0,9,19);
                     setBackgroundTheme(ShareVarSetting.themeColor);
+                    ShareVarSetting.colorActive = colorName;
                     break;
                 case "Summer":
                     ShareVarSetting.themeColor  = Color.LIGHTCORAL;
                     setBackgroundTheme(ShareVarSetting.themeColor);
+                    ShareVarSetting.colorActive = colorName;
                     break;
                 case "Autumn":
                     ShareVarSetting.themeColor = newColor = Color.LIGHTGOLDENRODYELLOW;
                     setBackgroundTheme(ShareVarSetting.themeColor);
+                    ShareVarSetting.colorActive = colorName;
                     break;
                 case "Winter":
                     ShareVarSetting.themeColor = newColor = Color.LIGHTBLUE;
                     setBackgroundTheme(ShareVarSetting.themeColor);
+                    ShareVarSetting.colorActive = colorName;
                     break;
                 case "Spring":
                     ShareVarSetting.themeColor = newColor = Color.LIGHTGREEN;
                     setBackgroundTheme(ShareVarSetting.themeColor);
+                    ShareVarSetting.colorActive = colorName;
                     break;
             }
         }

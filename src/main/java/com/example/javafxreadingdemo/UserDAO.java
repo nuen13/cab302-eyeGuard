@@ -10,14 +10,20 @@ import java.util.List;
 public class UserDAO {
     private Connection connection;
 
+    private CustomSettingDAO customSettingDAO;
     public UserDAO() {
         connection = DatabaseConnection.getInstance();
+
         initializeDatabase();
     }
 
     private void initializeDatabase() {
+
+        customSettingDAO = new CustomSettingDAO();
+
         createTable();
         createFocusSessionTable();
+        customSettingDAO.createCustomSettingTable();
     }
 
     public void createTable() {
@@ -75,6 +81,8 @@ public class UserDAO {
         }
     }
 
+
+    private int userID;
     public void insert(User user) {
         try (PreparedStatement insertUser = connection.prepareStatement(
                 "INSERT INTO users (email, password, last_access_date, day_streak) VALUES (?, ?, ?, ?)",
@@ -89,12 +97,15 @@ public class UserDAO {
             try (ResultSet generatedKeys = insertUser.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     user.setId(generatedKeys.getInt(1));
+                    userID = generatedKeys.getInt(1);
+                    customSettingDAO.saveCustomSetting(userID, "Default", "no sound", 0, 0 ); // Corrected
                 }
             }
         } catch (SQLException ex) {
             System.err.println("Error inserting user: " + ex.getMessage());
         }
     }
+
 
     public void update(User user) {
         try (PreparedStatement updateUser = connection.prepareStatement(
@@ -282,4 +293,6 @@ public class UserDAO {
             System.err.println("Error closing connection: " + ex.getMessage());
         }
     }
+
+
 }
