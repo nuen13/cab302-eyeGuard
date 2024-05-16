@@ -1,0 +1,18 @@
+#title{
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+}
+
+.label{
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+}
+
+.separator {
+    -fx-background-color: rgb(0, 9, 19);
+    -fx-padding: 5; /* Adjust padding */
+}
+
+.bold-label {
+    -fx-font-weight: bold;
+}

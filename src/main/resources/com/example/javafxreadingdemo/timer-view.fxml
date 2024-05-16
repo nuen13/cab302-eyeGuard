@@ -24,16 +24,17 @@
         <Button fx:id="setting" layoutX="400" layoutY="10" text="Settings" onAction="#gotosetting"/>
 
         <!-- Time       -->
-        <Button fx:id="worktime" layoutX="150" layoutY="50" text="Work Time" onAction="#onworkTime"/>
-        <Button fx:id="breaktime" layoutX="300" layoutY="50" text="Break Time" onAction="#onbreakTime"/>
+        <Button fx:id="worktime" maxWidth = "150" layoutX="150" layoutY="50" text="Work Time" onAction="#onworkTime"/>
+        <Button fx:id="breaktime" maxWidth = "150" layoutX="300" layoutY="50" text="Break Time" onAction="#onbreakTime"/>
 
 
 
 
         <!-- Quick Time Buttons -->
-        <Button fx:id="lowBtn" layoutX="100" layoutY="90" text="Bursts (30 mins)" onAction ="#onLowClicked" />
-        <Button fx:id="midBtn" layoutX="250" layoutY="90" text="Grind (45 mins)" onAction ="#onMidClicked" />
-        <Button fx:id="highBtn" layoutX="400" layoutY="90" text="Cram (1 hour)" onAction ="#onHighClicked"/>
+        <Button fx:id="lowBtn" prefWidth="130" layoutX="10" layoutY="90" text="Bursts (30 mins)" onAction ="#onLowClicked" />
+        <Button fx:id="midBtn" prefWidth="130"   layoutX="160" layoutY="90" text="Grind (45 mins)" onAction ="#onMidClicked" />
+        <Button fx:id="highBtn" prefWidth = "130"  layoutX="310" layoutY="90" text="Cram (1 hour)" onAction ="#onHighClicked"/>
+        <Button fx:id="customBtn" prefWidth = "130"  layoutX="460" layoutY="90" text="Custom" onAction ="#onCustomClicked"/>
 
         <!--Time Label -->
         <Label fx:id="timerLabel" layoutX="180" layoutY="120" text="" style="-fx-font-size: 60px;"/>

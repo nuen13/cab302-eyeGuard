@@ -16,6 +16,8 @@ public class    LoginPage extends JFrame {
     private JPasswordField passwordField;
     private UserDAO userDAO;
 
+
+
     public LoginPage() {
         super("EYEGUARD Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -24,6 +26,8 @@ public class    LoginPage extends JFrame {
         getContentPane().setBackground(new Color(0, 9, 19));
 
         userDAO = new UserDAO();
+
+
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -116,6 +120,8 @@ public class    LoginPage extends JFrame {
                 if ("Login".equals(buttonText)) {
                     if (validateInput()) {
                         Integer userId = userDAO.validateUser(emailField.getText(), new String(passwordField.getPassword()));
+//                        Integer userId = userDAO.validateUser("1@gmail.com", "12345678");
+//                        TimeAppController.loadCustomSetting(userId);
                         if (userId != null) {
                             dispose(); // Close the login window if input is valid
                             Platform.startup(() -> {

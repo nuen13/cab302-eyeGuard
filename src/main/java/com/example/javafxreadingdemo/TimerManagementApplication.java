@@ -21,6 +21,8 @@ public class TimerManagementApplication extends Application {
         this.userId = userId;
     }
 
+
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("timer-view.fxml"));
@@ -28,6 +30,8 @@ public class TimerManagementApplication extends Application {
 
         // Get the controller and set the userId
         TimeAppController controller = fxmlLoader.getController();
+        System.out.println("asaaa " + userId);
+        controller.loadCustomSetting(userId);
         controller.setUserId(userId);
 
         Scene scene = new Scene(root, 600.0, 400.0);
