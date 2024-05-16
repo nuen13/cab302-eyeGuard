@@ -8,6 +8,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class CustomSettingDAO {
 
     private Connection connection;
@@ -21,27 +25,25 @@ public class CustomSettingDAO {
         createCustomSettingTable();
     }
 
-    // Create the customSetting table if it doesn't exist
     public void createCustomSettingTable() {
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS customSetting (" +
+                "user_id INTEGER, " +
+                "themeColor VARCHAR(50), " +
+                "soundAlert VARCHAR(50), " +
+                "breakTime INTEGER, " +
+                "workTime INTEGER, " +
+                "FOREIGN KEY(user_id) REFERENCES users(id))";
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute(
-                    "CREATE TABLE IF NOT EXISTS customSetting (" +
-                            "user_id INTEGER, " +
-                            "themeColor VARCHAR(50), " +
-                            "soundAlert VARCHAR(50), " +
-                            "breakTime INTEGER, " +
-                            "workTime INTEGER, " +
-                            "FOREIGN KEY(user_id) REFERENCES users(id))"
-            );
+            stmt.execute(createTableSQL);
         } catch (SQLException ex) {
-            System.err.println("Error while creating customSetting table: " + ex.getMessage());
+            System.err.println("Error creating customSetting table: " + ex.getMessage());
         }
     }
-    // Retrieve custom settings for a user
+
     public List<CustomSetting> getCustomSetting(int userId) {
         List<CustomSetting> settings = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(
-                "SELECT user_id, themeColor, soundAlert, breakTime, workTime FROM customSetting WHERE user_id = ?")) {
+        String selectQuery = "SELECT user_id, themeColor, soundAlert, breakTime, workTime FROM customSetting WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(selectQuery)) {
             statement.setInt(1, userId);
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
@@ -51,13 +53,7 @@ public class CustomSettingDAO {
                     int breakTime = rs.getInt("breakTime");
                     int workTime = rs.getInt("workTime");
 
-                    CustomSetting setting = new CustomSetting(
-                            retrievedUserId,
-                            themeColor,
-                            soundAlert,
-                            breakTime,
-                            workTime
-                    );
+                    CustomSetting setting = new CustomSetting(retrievedUserId, themeColor, soundAlert, breakTime, workTime);
                     settings.add(setting);
                 }
             }
@@ -67,23 +63,17 @@ public class CustomSettingDAO {
         return settings;
     }
 
-//     Save custom settings for a user
     public void saveCustomSetting(int userId, String themeColor, String soundAlert, int breakTime, int workTime) {
-        try (PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO customSetting (user_id, themeColor, soundAlert, breakTime, workTime) VALUES (?, ?, ?, ?, ?)")) {
+        String insertQuery = "INSERT INTO customSetting (user_id, themeColor, soundAlert, breakTime, workTime) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(insertQuery)) {
             statement.setInt(1, userId);
             statement.setString(2, themeColor);
             statement.setString(3, soundAlert);
             statement.setInt(4, breakTime);
             statement.setInt(5, workTime);
-
             statement.executeUpdate();
         } catch (SQLException ex) {
             System.err.println("Error saving custom settings: " + ex.getMessage());
         }
     }
-
-    // Update custom settings (if needed)
-    // Delete custom settings (if needed)
 }
-

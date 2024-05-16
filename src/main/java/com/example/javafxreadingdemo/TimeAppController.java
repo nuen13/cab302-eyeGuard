@@ -3,7 +3,6 @@ package com.example.javafxreadingdemo;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,44 +19,31 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import javax.sound.sampled.*;
-import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
-
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.geometry.Insets;
-import javafx.scene.paint.Color;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-import javafx.scene.Scene;
-
 import java.time.LocalDate;
-import java.net.URL;
 import java.util.List;
 
-
 public class TimeAppController {
+    // Timer variables
     private Timeline timeline;
     private int secondsElapsed = 0;
-    private int timeInterval = 60; // Default break interval in seconds
-    private boolean timerSet = false; // Flag to track if break interval has been set
-    private boolean startActive = false;
-    private boolean onstartBtn = true;
+    private int timeInterval = 60;
+    private boolean timerSet = false;
+    private boolean timerRun = false;
     private int timeInMinute = 0;
     private int newTime = 0;
-    private boolean timerRun = false;
     private boolean breakTimePreset = false;
-    private UserDAO userDAO;
-    private int userId;
 
+    // UI elements
     @FXML
     private Label timerLabel;
-    @FXML
-    private TextField timeIntervalField;
     @FXML
     private AnchorPane rootPane;
     @FXML
@@ -74,41 +60,42 @@ public class TimeAppController {
     private Button midBtn;
     @FXML
     private Button highBtn;
-
     @FXML
     private Button customBtn;
+    @FXML
+    private Button setting;
 
+    // Other variables
+    private UserDAO userDAO;
+    private int userId;
     private CustomSettingDAO customSettingDAO;
+    private Clip clip;
+    private int displayCusTime_break;
+    private int displayCusTime_work;
 
-    public TimeAppController(int userId) {
-
-
-        this.userId = userId;
-
-    }
-
-    // Default constructor for Application launch
+    // Default constructor
     public TimeAppController() {
     }
 
+    // Setter for user ID
     public void setUserId(int userId) {
         this.userId = userId;
     }
-
-
     @FXML
     private void initialize() {
+        // Initialize DAOs
         customSettingDAO = new CustomSettingDAO();
         customSettingDAO.createCustomSettingTable();
-
         userDAO = new UserDAO();
 
+        // Add logo to layout
         addLogoToLayout();
 
         // Initialize timer label
         newTime = 1;
         updateTimerTime(newTime);
 
+        // Set initial styles for time buttons
         worktime.setStyle("-fx-background-color: #66BB6A; -fx-text-fill: white; -fx-cursor: hand;");
         breaktime.setStyle("");
 
@@ -197,13 +184,8 @@ public class TimeAppController {
         updateTimerTime(newTime);
     }
 
-    // pause timer and send alert box
+    // Display Alert Box
     private void handleBreak() {
-//        //Pause timeline and reset seconds before showing break message.
-//        timeline.pause();
-//        secondsElapsed = 0;
-//        updateTimerLabel();
-
         // Display an alert with the break message
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -212,24 +194,19 @@ public class TimeAppController {
             alert.setContentText(alertText);
             alert.showAndWait();
         });
-
-
     }
 
-    // get custom time -> change to correct format
+
+    // Update the timer label with the elapsed time in the correct format
     private void updateTimerLabel() {
-
-        int hours;
-        int min;
-        int sec;
-
-        hours = secondsElapsed / 3600;
-        min = (secondsElapsed % 3600) / 60;
-        sec = secondsElapsed % 60;
+        int hours = secondsElapsed / 3600;
+        int min = (secondsElapsed % 3600) / 60;
+        int sec = secondsElapsed % 60;
 
         timerLabel.setText(String.format("%02d:%02d:%02d", hours, min, sec));
-
     }
+
+    // Update the timer time to a new value and update the timer label and start button
     private void updateTimerTime(int newTime){
         if(timerRun){
             timeline.stop();
@@ -241,6 +218,8 @@ public class TimeAppController {
         updateTimerLabel();
         updateStartBtn(timerRun);
     }
+
+    // Update the text of the start button based on whether the timer is running or paused
     private void updateStartBtn(boolean timerRun){
         if (timerRun){
             startBtn.setText("Pause");
@@ -248,16 +227,15 @@ public class TimeAppController {
         else {
             startBtn.setText("Start");
         }
-    };
+    }
 
-    // start timer
+
+    // Start or pause the timer based on current state
     @FXML
     private void StartTime(ActionEvent event) {
         if (!timerRun) {
             if (timerSet) {
                 timerRun = true;
-                startActive = true;
-
 
                 timeline.play();
 
@@ -285,12 +263,10 @@ public class TimeAppController {
 
             if (displayCusTime_break != 0) {
                 customBtn.setText(Integer.toString(displayCusTime_break) + " mins");
-            }else {
+            } else {
                 customBtn.setText("Custom");
             }
-
-        }
-        else {
+        } else {
             lowBtn.setText("Bursts (30 mins)");
             midBtn.setText("Grind (45 mins)");
             highBtn.setText("Cram (1 hour)");
@@ -299,13 +275,12 @@ public class TimeAppController {
 
             if (displayCusTime_work != 0) {
                 customBtn.setText(Integer.toString(displayCusTime_work) + " mins");
-            }else {
+            } else {
                 customBtn.setText("Custom");
             }
-
         }
+    }
 
-    };
 
     @FXML
     private void onbreakTime(ActionEvent event){
@@ -314,8 +289,7 @@ public class TimeAppController {
 
         updateTimerTime(newTime);
         changeTimePreset(breakTimePreset);
-
-    };
+    }
 
     @FXML
     private void onworkTime(ActionEvent event){
@@ -324,20 +298,9 @@ public class TimeAppController {
 
         updateTimerTime(newTime);
         changeTimePreset(breakTimePreset);
-    };
+    }
 
 
-//    // reset timer
-//    @FXML
-//    private void onResetButtonClicked(ActionEvent event) {
-//        secondsElapsed = 0;
-//        timeInMinute = 0;
-//        timeIntervalField.setText(""); // Clear the text field for break interval
-//        startActive = false;
-//        updateTimerLabel();
-//        timeline.stop();
-//        timerSet = false; //Reset the flag as timer is reset
-//    }
 
 
     // go to analytic page
@@ -356,59 +319,39 @@ public class TimeAppController {
         }
     }
 
-    // custom Time
-    // get time
-//    @FXML
-//    private void onSettimeIntervalButtonClicked(ActionEvent event) {
-//        try {
-//            int newInterval = Integer.parseInt(timeIntervalField.getText());
-//            if (newInterval > 0) {
-//                timeInterval = newInterval;
-//                timeInMinute = Integer.parseInt(timeIntervalField.getText());
-//                updateTimerLabel(); //Update the timer label
-//                timerSet = true; // Update flag to indicate interval is set
-//            } else {
-//                showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
-//                timerSet = false; //Ensure flag is false if invalid input
-//            }
-//        } catch (NumberFormatException e) {
-//            showAlert("Invalid Input", "Please enter a valid number.");// Handle invalid input (not a number)
-//            timerSet = false; //Ensure flag is false if invalid input
-//        }
-//    }
-
 
     @FXML
     private void onLowClicked(ActionEvent event){
-        if (!breakTimePreset){
-            newTime= 1800;
-        } else {
-            newTime= 600;
-        }
+        if (!breakTimePreset){newTime = 1800;}
+        else {newTime = 600;}
         updateTimerTime(newTime);
     }
-    //set up alert
 
     @FXML
     private void onMidClicked(ActionEvent event){
-        if (!breakTimePreset){
-            newTime= 2700;
-        } else {
-            newTime= 1500;
-        }
+        if (!breakTimePreset){newTime = 2700;}
+        else {newTime = 1500;}
         updateTimerTime(newTime);
     }
-    //set up alert
 
     @FXML
     private void onHighClicked(ActionEvent event){
+        if (!breakTimePreset){newTime = 3600;}
+        else {newTime = 3600;}
+        updateTimerTime(newTime);
+    }
+    @FXML
+    private void onCustomClicked() throws IOException {
         if (!breakTimePreset){
-            newTime= 3600;
+            if (displayCusTime_work != 0) {newTime = displayCusTime_work * 60;}
+            else {gotosetting();}
         } else {
-            newTime= 3600;
+            if (displayCusTime_break != 0) {newTime = displayCusTime_break * 60;}
+            else {gotosetting();}
         }
         updateTimerTime(newTime);
     }
+
     //set up alert
 
 
@@ -421,8 +364,7 @@ public class TimeAppController {
     }
 
     // go to setting
-    @FXML
-    private Button setting;
+
 
     @FXML
     protected void gotosetting() throws IOException {
@@ -443,27 +385,28 @@ public class TimeAppController {
         }
     }
 
-
-    public static Color color;
-
-    SettingController settingController = new SettingController();
-    // Get Custom Setting
     public void loadCustomSetting(int userId) {
         List<CustomSetting> customSettings = customSettingDAO.getCustomSetting(userId);
         for (CustomSetting setting : customSettings) {
-
-            updateBackgroundColor(setting.getThemeColor());
-            getSound(setting.getSoundAlert());
-            getCustomTime(setting.getBreakTime(), setting.getWorkTime());
-
-            System.out.println("Theme Color: " + setting.getThemeColor());
-            System.out.println("Sound Alert: " + setting.getSoundAlert());
-            System.out.println("Break Time: " + setting.getBreakTime());
-            System.out.println("Work Time: " + setting.getWorkTime());
+            updateUIFromCustomSetting(setting);
+            printSettingDebugInfo(setting);
         }
     }
 
-    private void setBackgroundTheme (Color color){
+    private void updateUIFromCustomSetting(CustomSetting setting) {
+        updateBackgroundColor(setting.getThemeColor());
+        getSound(setting.getSoundAlert());
+        getCustomTime(setting.getBreakTime(), setting.getWorkTime());
+    }
+
+    private void printSettingDebugInfo(CustomSetting setting) {
+        System.out.println("Theme Color: " + setting.getThemeColor());
+        System.out.println("Sound Alert: " + setting.getSoundAlert());
+        System.out.println("Break Time: " + setting.getBreakTime());
+        System.out.println("Work Time: " + setting.getWorkTime());
+    }
+
+    private void setBackgroundTheme(Color color) {
         BackgroundFill backgroundFill = new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY);
         Background background = new Background(backgroundFill);
         rootPane.setBackground(background);
@@ -474,121 +417,76 @@ public class TimeAppController {
         if (colorName != null) {
             switch (colorName) {
                 case "Default":
-                    ShareVarSetting.themeColor  = Color.rgb(0,9,19);
-                    setBackgroundTheme(ShareVarSetting.themeColor);
-                    ShareVarSetting.colorActive = colorName;
+                    setThemeColor(Color.rgb(0, 9, 19));
                     break;
                 case "Summer":
-                    ShareVarSetting.themeColor  = Color.LIGHTCORAL;
-                    setBackgroundTheme(ShareVarSetting.themeColor);
-                    ShareVarSetting.colorActive = colorName;
+                    setThemeColor(Color.LIGHTCORAL);
                     break;
                 case "Autumn":
-                    ShareVarSetting.themeColor  = Color.LIGHTGOLDENRODYELLOW;
-                    setBackgroundTheme(ShareVarSetting.themeColor);
-                    ShareVarSetting.colorActive = colorName;
+                    setThemeColor(Color.LIGHTGOLDENRODYELLOW);
                     break;
                 case "Winter":
-                    ShareVarSetting.themeColor  = Color.LIGHTBLUE;
-                    setBackgroundTheme(ShareVarSetting.themeColor);
-                    ShareVarSetting.colorActive = colorName;
+                    setThemeColor(Color.LIGHTBLUE);
                     break;
                 case "Spring":
-                    ShareVarSetting.themeColor  = Color.LIGHTGREEN;
-                    setBackgroundTheme(ShareVarSetting.themeColor);
-                    ShareVarSetting.colorActive = colorName;
+                    setThemeColor(Color.LIGHTGREEN);
                     break;
             }
         }
     }
 
-    private Clip clip;
-    private void getSound(String soundName){
+    private void setThemeColor(Color color) {
+        ShareVarSetting.themeColor = color;
+        setBackgroundTheme(color);
+        ShareVarSetting.colorActive = color.toString(); // Assuming color.toString() gives the color name
+    }
+
+
+    private void getSound(String soundName) {
         if ("Default".equals(soundName)) {
-            // Stop the previous sound if it's playing
-            if (clip != null) {
-                clip.stop();
-                clip.close();
-            }
+            stopAndCloseClip();
             return;
         }
 
         ShareVarSetting.soundName = soundName;
         ShareVarSetting.alertSound = getClass().getResource("/soundEffect/" + soundName + ".wav");
     }
+
     private void playSound(URL soundURL) {
         if (soundURL != null) {
+            stopAndCloseClip();
+
             try {
-                // Stop the previous sound if it's playing
-                if (clip != null) {
-                    clip.stop();
-                    clip.close();
-                }
-
-                // Load the audio file
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundURL);
-
-                // Get a sound clip resource
                 clip = AudioSystem.getClip();
                 clip.open(audioInputStream);
-
-                // Play the audio clip
                 clip.start();
             } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-                e.printStackTrace();
-                System.err.println("Error playing sound file: " + soundURL);
+                handleSoundException(e, soundURL);
             }
         }
     }
 
+    private void stopAndCloseClip() {
+        if (clip != null) {
+            clip.stop();
+            clip.close();
+        }
+    }
 
+    private void handleSoundException(Exception e, URL soundURL) {
+        e.printStackTrace();
+        System.err.println("Error playing sound file: " + soundURL);
+    }
 
-
-    // Get Custom Button to Work hjhjh
-
-    private int displayCusTime_break;
-    private int displayCusTime_work;
     private void getCustomTime(int cusBreakTime, int cusWorkTime) {
-
         displayCusTime_work = cusWorkTime;
         displayCusTime_break = cusBreakTime;
 
-
-        if (!breakTimePreset) {
-            if (displayCusTime_work != 0) {
-                customBtn.setText(Integer.toString(displayCusTime_work) + " mins");
-            }else {
-                customBtn.setText("Custom");
-            }
-        } else {
-            if (displayCusTime_break != 0) {
-                customBtn.setText(Integer.toString(displayCusTime_break) + " mins");
-            }else {
-                customBtn.setText("Custom");
-            }
-        }
+        int displayTime = breakTimePreset ? displayCusTime_break : displayCusTime_work;
+        String buttonText = (displayTime != 0) ? (displayTime + " mins") : "Custom";
+        customBtn.setText(buttonText);
     }
-
-    @FXML
-    private void onCustomClicked() throws IOException {
-        if (!breakTimePreset){
-            if (displayCusTime_work != 0) {
-                newTime = displayCusTime_work * 60;
-            }
-            else {
-                gotosetting();
-            }
-        } else {
-            if (displayCusTime_break != 0) {
-                newTime = displayCusTime_break * 60;
-            }
-            else {
-                gotosetting();
-            }
-        }
-        updateTimerTime(newTime);
-    }
-
 
 
 }
