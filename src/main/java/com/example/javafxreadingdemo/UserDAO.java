@@ -98,7 +98,7 @@ public class UserDAO {
                 if (generatedKeys.next()) {
                     user.setId(generatedKeys.getInt(1));
                     userID = generatedKeys.getInt(1);
-                    customSettingDAO.saveCustomSetting(userID, "Default", "no sound", 0, 0 ); // Corrected
+                    customSettingDAO.saveCustomSetting(userID, "Default", "Default", 0, 0 ); // Corrected
                 }
             }
         } catch (SQLException ex) {

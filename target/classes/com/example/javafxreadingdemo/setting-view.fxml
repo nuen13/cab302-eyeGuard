@@ -20,6 +20,24 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.layout.AnchorPane?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+
 <AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="205.0" prefWidth="168.0" styleClass="layout" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.javafxreadingdemo.SettingController">
 
     <Button fx:id="back" text="Back" onAction="#backbutton" layoutX="10" layoutY="10"/>
@@ -31,15 +49,17 @@
         <!-- Custom Break Time -->
         <HBox spacing="10">
             <Label text="Custom Break Time"/>
-            <TextField  maxWidth="50"/>
-            <Button text = "Set Timer"/>
+            <TextField  fx:id = "breakCustom" maxWidth="50"/>
+            <Button fx:id = "breakCusBtn" text = "Set Timer" onAction = "#breakCustomClicked"/>
+            <Label fx:id = "yayText1" text=""/>
         </HBox>
 
         <!-- Custom Work Time -->
         <HBox spacing="10">
             <Label text="Custom Work Time"/>
-            <TextField fx:id="textFieldWork" maxWidth="50"/>
-            <Button text = "Set Timer"/>
+            <TextField fx:id="workCustom" maxWidth="50"/>
+            <Button fx:id = "workCusBtn" text = "Set Timer" onAction = "#workCustomClicked"/>
+            <Label fx:id = "yayText2" text=""/>
         </HBox>
     </VBox>
 
@@ -66,9 +86,9 @@
             <ComboBox fx:id="alarmSound" prefWidth="90.0" promptText="choose">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Default"/>
                         <String fx:value="bird"/>
                         <String fx:value="bus"/>
-                        <String fx:value="no sound"/>
                     </FXCollections>
                 </items>
             </ComboBox>

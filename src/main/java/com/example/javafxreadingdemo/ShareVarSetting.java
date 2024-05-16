@@ -22,4 +22,6 @@ public class ShareVarSetting {
 
     public static String colorActive = "Default";
     public static URL alertSound;
+
+    public static String soundName;
 }

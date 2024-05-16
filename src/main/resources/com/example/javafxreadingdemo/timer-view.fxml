@@ -34,7 +34,7 @@
         <Button fx:id="lowBtn" prefWidth="130" layoutX="10" layoutY="90" text="Bursts (30 mins)" onAction ="#onLowClicked" />
         <Button fx:id="midBtn" prefWidth="130"   layoutX="160" layoutY="90" text="Grind (45 mins)" onAction ="#onMidClicked" />
         <Button fx:id="highBtn" prefWidth = "130"  layoutX="310" layoutY="90" text="Cram (1 hour)" onAction ="#onHighClicked"/>
-        <Button fx:id="customBtn" prefWidth = "130"  layoutX="460" layoutY="90" text="Custom" onAction ="#onHighClicked"/>
+        <Button fx:id="customBtn" prefWidth = "130"  layoutX="460" layoutY="90" text="Custom" onAction ="#onCustomClicked"/>
 
         <!--Time Label -->
         <Label fx:id="timerLabel" layoutX="180" layoutY="120" text="" style="-fx-font-size: 60px;"/>

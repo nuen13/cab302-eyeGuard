@@ -18,9 +18,6 @@ public class CustomSettingDAO {
     }
 
     private void initializeDatabase() {
-
-
-
         createCustomSettingTable();
     }
 

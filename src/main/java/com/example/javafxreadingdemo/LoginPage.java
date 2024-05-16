@@ -121,7 +121,7 @@ public class    LoginPage extends JFrame {
                     if (validateInput()) {
                         Integer userId = userDAO.validateUser(emailField.getText(), new String(passwordField.getPassword()));
 //                        Integer userId = userDAO.validateUser("1@gmail.com", "12345678");
-                        TimeAppController.loadCustomSetting(userId);
+//                        TimeAppController.loadCustomSetting(userId);
                         if (userId != null) {
                             dispose(); // Close the login window if input is valid
                             Platform.startup(() -> {
