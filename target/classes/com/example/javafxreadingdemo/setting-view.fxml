@@ -86,10 +86,9 @@
             <ComboBox fx:id="alarmSound" prefWidth="90.0" promptText="choose">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Facility"/>
-                        <String fx:value="Gamer3"/>
-                        <String fx:value="Street"/>
-                        <String fx:value="No Sound"/>
+                        <String fx:value="Default"/>
+                        <String fx:value="bird"/>
+                        <String fx:value="bus"/>
                     </FXCollections>
                 </items>
             </ComboBox>

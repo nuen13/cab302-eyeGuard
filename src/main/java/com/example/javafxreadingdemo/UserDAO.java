@@ -11,14 +11,16 @@ public class UserDAO {
     private Connection connection;
 
     private CustomSettingDAO customSettingDAO;
-
     public UserDAO() {
         connection = DatabaseConnection.getInstance();
+
         initializeDatabase();
     }
 
     private void initializeDatabase() {
+
         customSettingDAO = new CustomSettingDAO();
+
         createTable();
         createFocusSessionTable();
         customSettingDAO.createCustomSettingTable();
@@ -79,8 +81,8 @@ public class UserDAO {
         }
     }
 
-    private int userID;
 
+    private int userID;
     public void insert(User user) {
         try (PreparedStatement insertUser = connection.prepareStatement(
                 "INSERT INTO users (email, password, last_access_date, day_streak) VALUES (?, ?, ?, ?)",
@@ -96,13 +98,14 @@ public class UserDAO {
                 if (generatedKeys.next()) {
                     user.setId(generatedKeys.getInt(1));
                     userID = generatedKeys.getInt(1);
-                    customSettingDAO.saveCustomSetting(userID, "Default", "Default", 0, 0); // Corrected
+                    customSettingDAO.saveCustomSetting(userID, "Default", "Default", 0, 0 ); // Corrected
                 }
             }
         } catch (SQLException ex) {
             System.err.println("Error inserting user: " + ex.getMessage());
         }
     }
+
 
     public void update(User user) {
         try (PreparedStatement updateUser = connection.prepareStatement(
@@ -206,18 +209,12 @@ public class UserDAO {
 
     public void insertFocusSession(int userId, LocalDate sessionDate, int duration) {
         long sessionDateAsLong = sessionDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
-        System.out.println("Inserting focus session:");
-        System.out.println("User ID: " + userId);
-        System.out.println("Session Date: " + sessionDateAsLong);
-        System.out.println("Focus Duration: " + duration);
-
         try (PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO focus_sessions (user_id, session_date, focus_duration) VALUES (?, ?, ?)")) {
             statement.setInt(1, userId);
             statement.setLong(2, sessionDateAsLong);
             statement.setInt(3, duration);
             statement.executeUpdate();
-            System.out.println("Focus session inserted successfully.");
         } catch (SQLException ex) {
             System.err.println("Error inserting focus session: " + ex.getMessage());
         }
@@ -296,4 +293,6 @@ public class UserDAO {
             System.err.println("Error closing connection: " + ex.getMessage());
         }
     }
+
+
 }
