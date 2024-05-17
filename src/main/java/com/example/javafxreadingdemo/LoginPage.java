@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public class    LoginPage extends JFrame {
+public class LoginPage extends JFrame {
     private JTextField emailField;
     private JPasswordField passwordField;
     private UserDAO userDAO;
