@@ -320,7 +320,7 @@ public class SettingController {
                     updateCustomSetting(colorName); // Update the database with the new theme color
                     break;
                 case "Autumn":
-                    ShareVarSetting.themeColor = Color.LIGHTGOLDENRODYELLOW;
+                    ShareVarSetting.themeColor = Color.rgb(217,156,19);
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
                     updateCustomSetting(colorName); // Update the database with the new theme color
