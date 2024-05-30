@@ -16,7 +16,7 @@ public class SignUpPage extends JFrame {
 
     private UserDAO userDAO; // DAO object for database operations
 
-    private CustomSettingDAO CustomSettingDAO;
+    private CustomSettingDAO customSettingDAO;
 
     public SignUpPage() {
         super("Sign Up");
@@ -27,11 +27,8 @@ public class SignUpPage extends JFrame {
 
         userDAO = new UserDAO(); // Initialize UserDAO
 
-        userDAO.createTable(); // Ensure table exists
-
-
-        CustomSettingDAO = new CustomSettingDAO();
-        CustomSettingDAO.createCustomSettingTable();
+        customSettingDAO = new CustomSettingDAO();
+        customSettingDAO.createCustomSettingTable();
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -190,8 +187,6 @@ public class SignUpPage extends JFrame {
         if (validateInput()) { // If sign-up is successful
             User newUser = new User(email, password); // Create a new user object
             userDAO.insert(newUser); // Insert the new user into the database
-
-
 
             JOptionPane.showMessageDialog(this, "Sign-up successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
             dispose(); // Close the SignUpPage

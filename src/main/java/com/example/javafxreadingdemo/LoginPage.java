@@ -2,21 +2,20 @@ package com.example.javafxreadingdemo;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public class    LoginPage extends JFrame {
+public class LoginPage extends JFrame {
     private JTextField emailField;
     private JPasswordField passwordField;
     private UserDAO userDAO;
-
-
 
     public LoginPage() {
         super("EYEGUARD Login");
@@ -26,8 +25,6 @@ public class    LoginPage extends JFrame {
         getContentPane().setBackground(new Color(0, 9, 19));
 
         userDAO = new UserDAO();
-
-
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
@@ -120,10 +117,9 @@ public class    LoginPage extends JFrame {
                 if ("Login".equals(buttonText)) {
                     if (validateInput()) {
                         Integer userId = userDAO.validateUser(emailField.getText(), new String(passwordField.getPassword()));
-//                        Integer userId = userDAO.validateUser("1@gmail.com", "12345678");
-//                        TimeAppController.loadCustomSetting(userId);
                         if (userId != null) {
                             dispose(); // Close the login window if input is valid
+                            userDAO.updateDayStreak(userId); // Update day streak
                             Platform.startup(() -> {
                                 TimerManagementApplication app = new TimerManagementApplication(userId);
                                 try {

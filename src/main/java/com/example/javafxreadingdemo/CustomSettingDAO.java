@@ -67,7 +67,7 @@ public class CustomSettingDAO {
         return settings;
     }
 
-//     Save custom settings for a user
+    //     Save custom settings for a user
     public void saveCustomSetting(int userId, String themeColor, String soundAlert, int breakTime, int workTime) {
         try (PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO customSetting (user_id, themeColor, soundAlert, breakTime, workTime) VALUES (?, ?, ?, ?, ?)")) {
@@ -86,4 +86,3 @@ public class CustomSettingDAO {
     // Update custom settings (if needed)
     // Delete custom settings (if needed)
 }
-

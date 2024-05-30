@@ -1,6 +1,7 @@
 package com.example.javafxreadingdemo;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,9 +12,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
@@ -23,12 +23,16 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+
 public class Analytics extends Application {
     private int loggedInUserId;
+    private AnalyticsDAO analyticsDAO;
     private UserDAO userDAO;
+    private CustomSettingDAO customSettingDAO;
     private BarChart<String, Number> barChart;
     private CategoryAxis xAxis;
     private NumberAxis yAxis;
+    private VBox root;
 
     public void setUserId(int userId) {
         this.loggedInUserId = userId;
@@ -36,19 +40,21 @@ public class Analytics extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        userDAO = new UserDAO();
-        userDAO.createFocusSessionTable();
+        analyticsDAO = new AnalyticsDAO();
+        userDAO = new UserDAO(); // Initialize UserDAO
+        customSettingDAO = new CustomSettingDAO(); // Initialize CustomSettingDAO
 
         // Main layout is a VBox
-        VBox root = new VBox(10);
+        root = new VBox(10);
         root.setAlignment(Pos.TOP_CENTER);
         root.setPadding(new Insets(15));
-        root.getStyleClass().add("root");
+        // Apply user settings (background color)
+        applyUserSettings();
 
         // Top part of the interface using a BorderPane
         BorderPane topBar = new BorderPane();
         ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/Logo/Logo.jpg.png")));
-        logoView.setFitHeight(100);  // Increase the height for a bigger image
+        logoView.setFitHeight(100);
         logoView.setPreserveRatio(true);
         topBar.setCenter(logoView);
         BorderPane.setAlignment(logoView, Pos.CENTER);
@@ -74,25 +80,27 @@ public class Analytics extends Application {
         analyticsButtons.setAlignment(Pos.CENTER);
 
         // Fetch data from the database
-        String dayStreak = userDAO.getDayStreak(loggedInUserId);
-        String timeFocused = formatTime(userDAO.getTotalFocusDuration(loggedInUserId));
-        String daysAccessed = userDAO.getDaysAccessed(loggedInUserId);
+        String dayStreak = analyticsDAO.getDayStreak(loggedInUserId);
+        String workTime = formatTime(analyticsDAO.getTotalWorkTime(loggedInUserId));
+        String breakTime = formatTime(analyticsDAO.getTotalBreakTime(loggedInUserId));
+        String daysAccessed = analyticsDAO.getDaysAccessed(loggedInUserId);
 
-        Button hoursFocused = createAnalyticsButton("Time Focused:", timeFocused);
+        Button workTimeButton = createAnalyticsButton("Work Time:", workTime);
+        Button breakTimeButton = createAnalyticsButton("Break Time:", breakTime);
         Button daysAccessedButton = createAnalyticsButton("Days Accessed:", daysAccessed);
         Button dayStreakButton = createAnalyticsButton("Day Streak:", dayStreak);
-        analyticsButtons.getChildren().addAll(hoursFocused, daysAccessedButton, dayStreakButton);
+        analyticsButtons.getChildren().addAll(workTimeButton, breakTimeButton, daysAccessedButton, dayStreakButton);
 
         // Bottom part of the interface - Time selection
         HBox timeSelection = new HBox(10);
         timeSelection.setAlignment(Pos.CENTER);
-        Button minutesButton = new Button("Minutes");
-        minutesButton.setId("minutesButton");
-        Button hoursButton = new Button("Hours");
-        hoursButton.setId("hoursButton");
-        Button daysButton = new Button("Days");
-        daysButton.setId("daysButton");
-        timeSelection.getChildren().addAll(minutesButton, hoursButton, daysButton);
+        Button workButton = new Button("Work Time");
+        workButton.setId("workButton");
+        Button bothButton = new Button("Both");
+        bothButton.setId("bothButton");
+        Button breakButton = new Button("Break Time");
+        breakButton.setId("breakButton");
+        timeSelection.getChildren().addAll(workButton, bothButton, breakButton);
 
         // Content area - Graph
         barChart = createBarChart();
@@ -100,19 +108,60 @@ public class Analytics extends Application {
         root.getChildren().addAll(topBar, analyticsButtons, timeSelection, barChart);
 
         // Show the stage
-        Scene scene = new Scene(root, 725, 460);
+        Scene scene = new Scene(root, 900, 450);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         primaryStage.setTitle("Analytics");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Load the focus sessions data for the default view (e.g., Hours)
-        loadFocusSessionsData("Hours");
+        // Update analytics data and load the focus sessions data for the default view
+        updateAnalyticsData();
+        loadFocusSessionsData("Work Time");
 
         // Set button actions
-        minutesButton.setOnAction(event -> loadFocusSessionsData("Minutes"));
-        hoursButton.setOnAction(event -> loadFocusSessionsData("Hours"));
-        daysButton.setOnAction(event -> loadFocusSessionsData("Days"));
+        workButton.setOnAction(event -> loadFocusSessionsData("Work Time"));
+        bothButton.setOnAction(event -> loadFocusSessionsData("Both"));
+        breakButton.setOnAction(event -> loadFocusSessionsData("Break Time"));
+    }
+
+    private void applyUserSettings() {
+        List<CustomSetting> customSettings = customSettingDAO.getCustomSetting(loggedInUserId);
+        for (CustomSetting setting : customSettings) {
+            updateBackgroundColor(setting.getThemeColor());
+        }
+    }
+
+    private void updateBackgroundColor(String colorName) {
+        if (colorName != null) {
+            Color color;
+            switch (colorName) {
+                case "Summer":
+                    color = Color.LIGHTCORAL;
+                    break;
+                case "Autumn":
+                    color = Color.LIGHTGOLDENRODYELLOW;
+                    break;
+                case "Winter":
+                    color = Color.LIGHTBLUE;
+                    break;
+                case "Spring":
+                    color = Color.LIGHTGREEN;
+                    break;
+                default:
+                    color = Color.rgb(0, 9, 19);
+            }
+            setBackgroundTheme(color);
+        }
+    }
+
+    private void setBackgroundTheme(Color color) {
+        BackgroundFill backgroundFill = new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY);
+        Background background = new Background(backgroundFill);
+        root.setBackground(background);
+    }
+
+    private void updateAnalyticsData() {
+        userDAO.updateDayStreak(loggedInUserId);
     }
 
     private Button createAnalyticsButton(String text, String value) {
@@ -124,18 +173,19 @@ public class Analytics extends Application {
 
     private BarChart<String, Number> createBarChart() {
         xAxis = new CategoryAxis();
-        yAxis = new NumberAxis(0, 1, 0.15); //Graph's y-axis measuring 1 hour in 15min increments
-        xAxis.setLabel("Session Date");//
+        yAxis = new NumberAxis();
+        xAxis.setLabel("Session Date");
         yAxis.setLabel("Focus Time (hours)");
 
         BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
         barChart.setTitle("Focus Hours");
+        barChart.setLegendVisible(true); // Make sure legend is visible
         return barChart;
     }
 
-    private void loadFocusSessionsData(String period) {
+    private void loadFocusSessionsData(String type) {
         // Fetch the focus sessions data from the database
-        List<FocusSession> focusSessions = userDAO.getFocusSessionsByUserId(loggedInUserId);
+        List<FocusSession> focusSessions = analyticsDAO.getFocusSessionsByUserId(loggedInUserId);
 
         // Clear any existing data in the chart
         barChart.getData().clear();
@@ -145,25 +195,53 @@ public class Analytics extends Application {
         }
 
         // Aggregate focus durations by session date
-        Map<LocalDate, Integer> aggregatedData = focusSessions.stream()
+        Map<LocalDate, Integer> aggregatedWorkData = focusSessions.stream()
                 .collect(Collectors.groupingBy(
                         FocusSession::getSessionDate,
-                        Collectors.summingInt(FocusSession::getFocusDuration)
+                        Collectors.summingInt(FocusSession::getWorkTime)
                 ));
 
-        // Create a new series to hold the data
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Time Focused");
+        Map<LocalDate, Integer> aggregatedBreakData = focusSessions.stream()
+                .collect(Collectors.groupingBy(
+                        FocusSession::getSessionDate,
+                        Collectors.summingInt(FocusSession::getBreakTime)
+                ));
+
+        // Create new series to hold the data
+        XYChart.Series<String, Number> workSeries = new XYChart.Series<>();
+        workSeries.setName("Work Time");
+
+        XYChart.Series<String, Number> breakSeries = new XYChart.Series<>();
+        breakSeries.setName("Break Time");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
 
-        aggregatedData.forEach((date, duration) -> {
-            String dateString = date.format(formatter);
-            series.getData().add(new XYChart.Data<>(dateString, duration / 3600.0)); // Convert seconds to hours
-        });
+        if (type.equals("Work Time") || type.equals("Both")) {
+            aggregatedWorkData.forEach((date, duration) -> {
+                String dateString = date.format(formatter);
+                double timeInHours = duration / 3600.0; // Convert seconds to hours
+                yAxis.setLabel("Time (hours)");
+                workSeries.getData().add(new XYChart.Data<>(dateString, timeInHours));
+            });
+        }
 
-        // Add the series to the chart
-        barChart.getData().add(series);
+        if (type.equals("Break Time") || type.equals("Both")) {
+            aggregatedBreakData.forEach((date, duration) -> {
+                String dateString = date.format(formatter);
+                double timeInHours = duration / 3600.0; // Convert seconds to hours
+                yAxis.setLabel("Time (hours)");
+                breakSeries.getData().add(new XYChart.Data<>(dateString, timeInHours));
+            });
+        }
+
+        // Add the series to the chart based on the selected type
+        if (type.equals("Work Time")) {
+            barChart.getData().add(workSeries);
+        } else if (type.equals("Break Time")) {
+            barChart.getData().add(breakSeries);
+        } else if (type.equals("Both")) {
+            barChart.getData().addAll(workSeries, breakSeries);
+        }
     }
 
     private String formatTime(int totalSeconds) {
@@ -174,7 +252,6 @@ public class Analytics extends Application {
 
         return String.format("%d Days %d Hours %d Minutes %d Seconds", days, hours, minutes, seconds);
     }
-
 
     public static void main(String[] args) {
         launch(args);

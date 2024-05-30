@@ -3,7 +3,6 @@ package com.example.javafxreadingdemo;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,45 +15,34 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.sound.sampled.*;
-import java.io.File;
-import java.io.IOException;
-
-import javax.sound.sampled.*;
-import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
-
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.geometry.Insets;
-import javafx.scene.paint.Color;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
-import javafx.scene.Scene;
-
 import java.time.LocalDate;
-import java.net.URL;
 import java.util.List;
 
-
 public class TimeAppController {
+
     private Timeline timeline;
     private int secondsElapsed = 0;
     private int timeInterval = 60; // Default break interval in seconds
     private boolean timerSet = false; // Flag to track if break interval has been set
+    private int storedWorkTimePreset = 3600; // Default work time preset in seconds (1 hour)
+    private int storedBreakTimePreset = 600; // Default break time preset in seconds (10 minutes)
+
     private boolean startActive = false;
     private boolean onstartBtn = true;
-    private int timeInMinute = 0;
     private int newTime = 0;
     private boolean timerRun = false;
     private boolean breakTimePreset = false;
     private UserDAO userDAO;
+    private AnalyticsDAO analyticsDAO;
     private int userId;
 
     @FXML
@@ -77,33 +65,29 @@ public class TimeAppController {
     private Button midBtn;
     @FXML
     private Button highBtn;
-
     @FXML
     private Button customBtn;
 
     private CustomSettingDAO customSettingDAO;
 
-    private int storedWorkTimePreset = 5; // Default work time preset in seconds (1 hour)
-    private int storedBreakTimePreset = 5; // Default break time preset in seconds (10 minutes)
-
-
+    public TimeAppController(int userId) {
+        this.userId = userId;
+    }
 
     // Default constructor for Application launch
     public TimeAppController() {
-
     }
 
     public void setUserId(int userId) {
         this.userId = userId;
     }
 
-
     @FXML
     private void initialize() {
         customSettingDAO = new CustomSettingDAO();
         customSettingDAO.createCustomSettingTable();
-
         userDAO = new UserDAO();
+        analyticsDAO = new AnalyticsDAO();
 
         addLogoToLayout();
 
@@ -117,8 +101,7 @@ public class TimeAppController {
         // Create timeline for the timer
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             secondsElapsed--;
-            if (secondsElapsed % timeInterval == 0) {
-                // Call method to handle break
+            if (secondsElapsed <= 0) {
                 timerEnd();
             }
             updateTimerLabel();
@@ -169,54 +152,39 @@ public class TimeAppController {
     }
 
     private void saveFocusSession() {
-        if (secondsElapsed > 0 && userId > 0) {
-            userDAO.insertFocusSession(userId, LocalDate.now(), secondsElapsed);
-            secondsElapsed = 0;
+        if (userId > 0) {
+            analyticsDAO.updateFocusSession(userId, LocalDate.now(), secondsElapsed, breakTimePreset);
         }
     }
 
     private String alertText = "";
+
     private void timerEnd() {
+
         if (breakTimePreset) {
-            // Break time has ended, switch to work time
             alertText = "AAAAA .... Get Back To Workkkk";
             if (ShareVarSetting.alertSound != null) {
-                playSound(ShareVarSetting.alertSound, -9.0f); // Reduce volume by 9 decibels
+                playSound(ShareVarSetting.alertSound,-9.0f); // Reduce volume by 9 decibels
             }
             breakTimePreset = false;
-            newTime = storedWorkTimePreset; // Set the new time with the stored work time preset
-
-            // Save the focus session for work time
-            saveFocusSession();
-
+            newTime = storedWorkTimePreset;
         } else {
-            // Work time has ended, switch to break time
             alertText = "Ring Ring... It is time for a Break";
             if (ShareVarSetting.alertSound != null) {
-                playSound(ShareVarSetting.alertSound, -9.0f); // Reduce volume by 9 decibels
+                playSound(ShareVarSetting.alertSound,-9.0f); // Reduce volume by 9 decibels
             }
             breakTimePreset = true;
-            newTime = storedBreakTimePreset; // Set the new time with the stored break time preset
-
-            // Save the focus session for break time
-            saveFocusSession();
+            newTime = storedBreakTimePreset;
         }
-
-        // Handle the break and update UI
         handleBreak();
+        saveFocusSession();
         changeTimePreset(breakTimePreset);
-        updateTimerTime(newTime); // Update the timer with the new time
-
-        StartTime(null);
+        updateTimerTime(newTime);
+        StartTime(null);  // Automatically restart the timer
     }
 
     // pause timer and send alert box
     private void handleBreak() {
-//        //Pause timeline and reset seconds before showing break message.
-//        timeline.pause();
-//        secondsElapsed = 0;
-//        updateTimerLabel();
-
         // Display an alert with the break message
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -225,43 +193,36 @@ public class TimeAppController {
             alert.setContentText(alertText);
             alert.showAndWait();
         });
-
-
     }
 
     // get custom time -> change to correct format
     private void updateTimerLabel() {
-
-        int hours;
-        int min;
-        int sec;
-
-        hours = secondsElapsed / 3600;
-        min = (secondsElapsed % 3600) / 60;
-        sec = secondsElapsed % 60;
+        int hours = secondsElapsed / 3600;
+        int min = (secondsElapsed % 3600) / 60;
+        int sec = secondsElapsed % 60;
 
         timerLabel.setText(String.format("%02d:%02d:%02d", hours, min, sec));
-
     }
-    private void updateTimerTime(int newTime){
-        if(timerRun){
+
+    private void updateTimerTime(int newTime) {
+        if (timerRun) {
             timeline.stop();
             timerRun = false;
         }
-        secondsElapsed = timeInMinute = newTime;
+        secondsElapsed = newTime;
         timerSet = true;
 
         updateTimerLabel();
         updateStartBtn(timerRun);
     }
-    private void updateStartBtn(boolean timerRun){
-        if (timerRun){
+
+    private void updateStartBtn(boolean timerRun) {
+        if (timerRun) {
             startBtn.setText("Pause");
-        }
-        else {
+        } else {
             startBtn.setText("Start");
         }
-    };
+    }
 
     // start timer
     @FXML
@@ -270,26 +231,22 @@ public class TimeAppController {
             if (timerSet) {
                 timerRun = true;
                 startActive = true;
-
-
                 timeline.play();
-
                 updateStartBtn(timerRun);
-
+                saveFocusSession();
             } else {
                 showAlert("Start Error", "Please set the break interval before starting the timer.");
             }
-        }
-        else{
+        } else {
             timerRun = false;
             timeline.pause();
-
             updateStartBtn(timerRun);
+            saveFocusSession();
         }
     }
 
-    private void changeTimePreset(boolean breakTimePreset){
-        if(breakTimePreset){
+    private void changeTimePreset(boolean breakTimePreset) {
+        if (breakTimePreset) {
             lowBtn.setText("Short (10 mins)");
             midBtn.setText("Long (25 mins)");
             highBtn.setText("Nappie (1 hour)");
@@ -298,12 +255,11 @@ public class TimeAppController {
 
             if (displayCusTime_break != 0) {
                 customBtn.setText(Integer.toString(displayCusTime_break) + " mins");
-            }else {
+            } else {
                 customBtn.setText("Custom");
             }
 
-        }
-        else {
+        } else {
             lowBtn.setText("Bursts (30 mins)");
             midBtn.setText("Grind (45 mins)");
             highBtn.setText("Cram (1 hour)");
@@ -312,41 +268,33 @@ public class TimeAppController {
 
             if (displayCusTime_work != 0) {
                 customBtn.setText(Integer.toString(displayCusTime_work) + " mins");
-            }else {
+            } else {
                 customBtn.setText("Custom");
             }
-
         }
-
-    };
+    }
 
     @FXML
-    private void onbreakTime(ActionEvent event){
+    private void onbreakTime(ActionEvent event) {
         breakTimePreset = true;
-        newTime = storedBreakTimePreset; // Update newTime with the stored break time preset
-
+        newTime = storedBreakTimePreset;
         updateTimerTime(newTime);
         changeTimePreset(breakTimePreset);
-    };
+        saveFocusSession();
+    }
 
     @FXML
-    private void onworkTime(ActionEvent event){
+    private void onworkTime(ActionEvent event) {
         breakTimePreset = false;
-        newTime = storedWorkTimePreset; // Update newTime with the stored work time preset
-
+        newTime = storedWorkTimePreset;
         updateTimerTime(newTime);
         changeTimePreset(breakTimePreset);
-    };
+        saveFocusSession();
+    }
 
-
-
-    // go to analytic page
     @FXML
     private void onAnalyticsButtonClicked(ActionEvent event) {
         try {
-            if (timeline != null && timeline.getStatus() == Animation.Status.RUNNING) {
-                timeline.stop();
-            }
             Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             currentStage.close();
             Analytics analytics = new Analytics();
@@ -360,51 +308,45 @@ public class TimeAppController {
     }
 
     @FXML
-    private void onLowClicked(ActionEvent event){
-        if (!breakTimePreset){
-            storedWorkTimePreset = 1800; // Set the stored work time preset to 30 minutes (1800 seconds)
-            newTime= storedWorkTimePreset;
+    private void onLowClicked(ActionEvent event) {
+        if (!breakTimePreset) {
+            newTime = 1800;
         } else {
-            storedBreakTimePreset = 600; // Set the stored break time preset to 10 minutes (600 seconds)
-            newTime= storedBreakTimePreset;
+            newTime = 600;
         }
         updateTimerTime(newTime);
+        saveFocusSession();
     }
-    //set up alert
 
     @FXML
-    private void onMidClicked(ActionEvent event){
-        if (!breakTimePreset){
-            storedWorkTimePreset = 2700; // Set the stored work time preset to 45 minutes (2700 seconds)
-            newTime= storedWorkTimePreset;
+    private void onMidClicked(ActionEvent event) {
+        if (!breakTimePreset) {
+            newTime = 2700;
         } else {
-            storedBreakTimePreset = 1500; // Set the stored break time preset to 25 minutes (1500 seconds)
-            newTime= storedBreakTimePreset;
+            newTime = 1500;
         }
         updateTimerTime(newTime);
+        saveFocusSession();
     }
-    //set up alert
 
     @FXML
-    private void onHighClicked(ActionEvent event){
-        if (!breakTimePreset){
-            storedWorkTimePreset = 3600; // Set the stored work time preset to 1 hour (3600 seconds)
-            newTime= storedWorkTimePreset;
+    private void onHighClicked(ActionEvent event) {
+        if (!breakTimePreset) {
+            newTime = 3600;
         } else {
-            storedBreakTimePreset = 3600; // Set the stored break time preset to 1 hour (3600 seconds)
-            newTime= storedBreakTimePreset;
+            newTime = 3600;
         }
         updateTimerTime(newTime);
+        saveFocusSession();
     }
-    //set up alert
 
-
-    private void showAlert(String title, String content){
+    private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+        saveFocusSession();
     }
 
     // go to setting
@@ -413,14 +355,9 @@ public class TimeAppController {
 
     @FXML
     protected void gotosetting() throws IOException {
-        // Stop the timer if it's running
-        if (timeline != null && timeline.getStatus() == Animation.Status.RUNNING) {
-            timeline.stop();
-        }
-
         Stage stage = (Stage) this.setting.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("setting-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        Scene scene = new Scene((Parent) fxmlLoader.load(), 600, 400);
 
         // Get the controller and set the userId
         SettingController setController = fxmlLoader.getController();
@@ -435,16 +372,16 @@ public class TimeAppController {
         }
     }
 
-
     public static Color color;
 
     SettingController settingController = new SettingController();
+
     // Get Custom Setting
     public void loadCustomSetting(int userId) {
         List<CustomSetting> customSettings = customSettingDAO.getCustomSetting(userId);
         for (CustomSetting setting : customSettings) {
             updateBackgroundColor(setting.getThemeColor());
-            getSound(setting.getSoundAlert()); // Only set the URL, do not play the sound
+            getSound(setting.getSoundAlert());
             getCustomTime(setting.getBreakTime(), setting.getWorkTime());
 
             System.out.println("Theme Color: " + setting.getThemeColor());
@@ -454,7 +391,7 @@ public class TimeAppController {
         }
     }
 
-    private void setBackgroundTheme (Color color){
+    private void setBackgroundTheme(Color color) {
         BackgroundFill backgroundFill = new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY);
         Background background = new Background(backgroundFill);
         rootPane.setBackground(background);
@@ -465,27 +402,27 @@ public class TimeAppController {
         if (colorName != null) {
             switch (colorName) {
                 case "Default":
-                    ShareVarSetting.themeColor  = Color.rgb(0,9,19);
+                    ShareVarSetting.themeColor = Color.rgb(0, 9, 19);
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
                     break;
                 case "Summer":
-                    ShareVarSetting.themeColor  = Color.LIGHTCORAL;
+                    ShareVarSetting.themeColor = Color.LIGHTCORAL;
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
                     break;
                 case "Autumn":
-                    ShareVarSetting.themeColor  = Color.LIGHTGOLDENRODYELLOW;
+                    ShareVarSetting.themeColor = Color.LIGHTGOLDENRODYELLOW;
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
                     break;
                 case "Winter":
-                    ShareVarSetting.themeColor  = Color.LIGHTBLUE;
+                    ShareVarSetting.themeColor = Color.LIGHTBLUE;
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
                     break;
                 case "Spring":
-                    ShareVarSetting.themeColor  = Color.LIGHTGREEN;
+                    ShareVarSetting.themeColor = Color.LIGHTGREEN;
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
                     break;
@@ -495,16 +432,12 @@ public class TimeAppController {
 
     private Clip clip;
     private void getSound(String soundName) {
-        System.out.println("Setting sound: " + soundName); // Debug statement
         if ("Default".equals(soundName)) {
-            // Stop the previous sound if it's playing and clear the alert sound
+            // Stop the previous sound if it's playing
             if (clip != null) {
                 clip.stop();
                 clip.close();
             }
-            ShareVarSetting.soundName = "Default"; // Explicitly set to "Default"
-            ShareVarSetting.alertSound = null; // Clear the alert sound
-            System.out.println("Sound set to default (no sound)."); // Debug statement
             return;
         }
 
@@ -513,8 +446,6 @@ public class TimeAppController {
 
         if (ShareVarSetting.alertSound == null) {
             System.err.println("Error: Sound file not found for " + soundName);
-        } else {
-            System.out.println("Sound set to: " + soundName); // Debug statement
         }
     }
     private void playSound(URL soundURL, float volumeReductionInDecibels) {
@@ -558,31 +489,24 @@ public class TimeAppController {
         }
     }
 
-
-
-
-
-
     // Get Custom Button to Work hjhjh
-
     private int displayCusTime_break;
     private int displayCusTime_work;
-    private void getCustomTime(int cusBreakTime, int cusWorkTime) {
 
+    private void getCustomTime(int cusBreakTime, int cusWorkTime) {
         displayCusTime_work = cusWorkTime;
         displayCusTime_break = cusBreakTime;
-
 
         if (!breakTimePreset) {
             if (displayCusTime_work != 0) {
                 customBtn.setText(Integer.toString(displayCusTime_work) + " mins");
-            }else {
+            } else {
                 customBtn.setText("Custom");
             }
         } else {
             if (displayCusTime_break != 0) {
                 customBtn.setText(Integer.toString(displayCusTime_break) + " mins");
-            }else {
+            } else {
                 customBtn.setText("Custom");
             }
         }
@@ -590,28 +514,20 @@ public class TimeAppController {
 
     @FXML
     private void onCustomClicked() throws IOException {
-        if (!breakTimePreset){
+        if (!breakTimePreset) {
             if (displayCusTime_work != 0) {
-                storedWorkTimePreset = displayCusTime_work * 60; // Convert minutes to seconds
-                newTime = storedWorkTimePreset;
+                newTime = displayCusTime_work * 60;
             } else {
                 gotosetting();
-                return;
             }
         } else {
             if (displayCusTime_break != 0) {
-                storedBreakTimePreset = displayCusTime_break * 60; // Convert minutes to seconds
-                newTime = storedBreakTimePreset;
+                newTime = displayCusTime_break * 60;
             } else {
                 gotosetting();
-                return;
             }
         }
         updateTimerTime(newTime);
+        saveFocusSession();
     }
-
-
-
 }
-
-

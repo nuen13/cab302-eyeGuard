@@ -6,13 +6,15 @@ public class FocusSession {
     private int sessionId;
     private int userId;
     private LocalDate sessionDate;
-    private int focusDuration; // in minutes
+    private int workTime; // in seconds
+    private int breakTime; // in seconds
 
-    public FocusSession(int sessionId, int userId, LocalDate sessionDate, int focusDuration) {
+    public FocusSession(int sessionId, int userId, LocalDate sessionDate, int workTime, int breakTime) {
         this.sessionId = sessionId;
         this.userId = userId;
         this.sessionDate = sessionDate;
-        this.focusDuration = focusDuration;
+        this.workTime = workTime;
+        this.breakTime = breakTime;
     }
 
     public int getSessionId() {
@@ -27,8 +29,12 @@ public class FocusSession {
         return sessionDate;
     }
 
-    public int getFocusDuration() {
-        return focusDuration;
+    public int getWorkTime() {
+        return workTime;
+    }
+
+    public int getBreakTime() {
+        return breakTime;
     }
 
     @Override
@@ -37,7 +43,8 @@ public class FocusSession {
                 "sessionId=" + sessionId +
                 ", userId=" + userId +
                 ", sessionDate=" + sessionDate +
-                ", focusDuration=" + focusDuration +
+                ", workTime=" + workTime +
+                ", breakTime=" + breakTime +
                 '}';
     }
 }

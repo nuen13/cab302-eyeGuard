@@ -154,29 +154,6 @@ public class SettingController {
         System.out.println(ShareVarSetting.colorActive);
     }
 
-    // Get Custom Timer
-    // Retrieve Custom Timer and Send it to Db
-    // WorkTime
-
-
-
-//    private void onSettimeIntervalButtonClicked(ActionEvent event) {
-//        try {
-//            int newInterval = Integer.parseInt(timeIntervalField.getText());
-//            if (newInterval > 0) {
-//                timeInterval = newInterval;
-//                timeInMinute = Integer.parseInt(timeIntervalField.getText());
-//                updateTimerLabel(); //Update the timer label
-//                timerSet = true; // Update flag to indicate interval is set
-//            } else {
-//                showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
-//                timerSet = false; //Ensure flag is false if invalid input
-//            }
-//        } catch (NumberFormatException e) {
-//            showAlert("Invalid Input", "Please enter a valid number.");// Handle invalid input (not a number)
-//            timerSet = false; //Ensure flag is false if invalid input
-//        }
-//    }
     private void showAlert(String title, String content){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

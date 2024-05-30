@@ -3,13 +3,13 @@ package com.example.javafxreadingdemo;
 import java.time.LocalDate;
 
 public class User {
-    private int id; // This can be useful if you're planning to uniquely identify users.
+    private int id;
     private String email;
     private String password;
-    private LocalDate lastAccessDate; // Added to track the last date of access.
-    private int dayStreak; // Added to track the number of consecutive days accessed.
+    private LocalDate lastAccessDate;
+    private int dayStreak;
 
-    // Constructor used when creating a user when you don't have an ID yet (e.g., before inserting into the database)
+    // Constructor used when creating a user when you don't have an ID yet
     public User(String email, String password) {
         this.email = email;
         this.password = password;
