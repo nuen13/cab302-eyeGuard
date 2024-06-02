@@ -160,18 +160,23 @@ public class TimeAppController {
             if (ShareVarSetting.alertSound != null) {
                 playSound(ShareVarSetting.alertSound,-9.0f); // Reduce volume by 9 decibels
             }
+            secondsElapsed = storedBreakTimePreset;
+            saveFocusSession();
             breakTimePreset = false;
-            newTime = storedWorkTimePreset;
+            newTime = storedBreakTimePreset;
         } else {
             alertText = "Ring Ring... It is time for a Break";
             if (ShareVarSetting.alertSound != null) {
                 playSound(ShareVarSetting.alertSound,-9.0f); // Reduce volume by 9 decibels
             }
+            secondsElapsed = storedWorkTimePreset;
+            saveFocusSession();
             breakTimePreset = true;
             newTime = storedBreakTimePreset;
+
         }
         handleBreak();
-        saveFocusSession();
+
         changeTimePreset(breakTimePreset);
         updateTimerTime(newTime);
         StartTime(null);  // Automatically restart the timer
@@ -228,7 +233,7 @@ public class TimeAppController {
                 startActive = true;
                 timeline.play();
                 updateStartBtn(timerRun);
-                saveFocusSession();
+
             } else {
                 showAlert("Start Error", "Please set the break interval before starting the timer.");
             }
@@ -236,7 +241,7 @@ public class TimeAppController {
             timerRun = false;
             timeline.pause();
             updateStartBtn(timerRun);
-            saveFocusSession();
+
         }
     }
 
@@ -275,7 +280,7 @@ public class TimeAppController {
         newTime = storedBreakTimePreset;
         updateTimerTime(newTime);
         changeTimePreset(breakTimePreset);
-        saveFocusSession();
+
     }
 
     @FXML
@@ -284,7 +289,7 @@ public class TimeAppController {
         newTime = storedWorkTimePreset;
         updateTimerTime(newTime);
         changeTimePreset(breakTimePreset);
-        saveFocusSession();
+
     }
 
     @FXML
@@ -312,7 +317,6 @@ public class TimeAppController {
             newTime= storedBreakTimePreset;
         }
         updateTimerTime(newTime);
-        saveFocusSession();
     }
 
     @FXML
@@ -325,7 +329,6 @@ public class TimeAppController {
             newTime= storedBreakTimePreset;
         }
         updateTimerTime(newTime);
-        saveFocusSession();
     }
 
     @FXML
@@ -338,7 +341,7 @@ public class TimeAppController {
             newTime= storedBreakTimePreset;
         }
         updateTimerTime(newTime);
-        saveFocusSession();
+
     }
 
     private void showAlert(String title, String content) {
@@ -527,6 +530,5 @@ public class TimeAppController {
             }
         }
         updateTimerTime(newTime);
-        saveFocusSession();
     }
 }
