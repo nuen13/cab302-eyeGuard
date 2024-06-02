@@ -30,7 +30,7 @@ import javafx.scene.control.Label;
 
 public class SettingController {
 
-    private CustomSettingDAO CustomSettingDAO;
+    private CustomSettingDAO customSettingDAO;
 
     private Button breakTimeC;
     private Color newColor;
@@ -43,8 +43,6 @@ public class SettingController {
         this.userId = userId;
     }
 
-
-
     @FXML
     protected void backbutton() throws IOException {
         Stage stage = (Stage)this.back.getScene().getWindow();
@@ -54,7 +52,6 @@ public class SettingController {
         TimeAppController controller = fxmlLoader.getController();
         controller.loadCustomSetting(userId);
         controller.setUserId(userId);
-
 
         stage.setTitle("eyeGuard App");
         stage.setScene(scene);
@@ -75,23 +72,19 @@ public class SettingController {
     @FXML
     private AnchorPane rootPane;
 
-
     @FXML
     private Label yayText2;
     @FXML
     private Label yayText1;
     private Connection connection;
 
-    private CustomSettingDAO customSettingDAO;
-
     private void initializeDatabase() {
-
         customSettingDAO = new CustomSettingDAO();
         customSettingDAO.createCustomSettingTable();
     }
+
     @FXML
     public void initialize() {
-
         connection = DatabaseConnection.getInstance();
         initializeDatabase();
 
@@ -103,44 +96,22 @@ public class SettingController {
 
         alarmSound.getSelectionModel().select(ShareVarSetting.soundName);
         alarmSound.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> getSound(newVal));
-
     }
 
-    // Get Custom Timer
-    // Retrieve Custom Timer and Send it to Db
-    // WorkTime
-
-
-
-    //    private void onSettimeIntervalButtonClicked(ActionEvent event) {
-//        try {
-//            int newInterval = Integer.parseInt(timeIntervalField.getText());
-//            if (newInterval > 0) {
-//                timeInterval = newInterval;
-//                timeInMinute = Integer.parseInt(timeIntervalField.getText());
-//                updateTimerLabel(); //Update the timer label
-//                timerSet = true; // Update flag to indicate interval is set
-//            } else {
-//                showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
-//                timerSet = false; //Ensure flag is false if invalid input
-//            }
-//        } catch (NumberFormatException e) {
-//            showAlert("Invalid Input", "Please enter a valid number.");// Handle invalid input (not a number)
-//            timerSet = false; //Ensure flag is false if invalid input
-//        }
-//    }
-    private void showAlert(String title, String content){
+    protected void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
     }
+
     @FXML
     private TextField breakCustom;
     @FXML
     private TextField workCustom;
-    private void updateBreakTime(int time) {
+
+    protected void updateBreakTime(int time) {
         try (PreparedStatement updateUser = connection.prepareStatement(
                 "UPDATE customSetting SET breakTime = ? WHERE user_id = ?")) {
             updateUser.setInt(1, time);
@@ -150,6 +121,7 @@ public class SettingController {
             System.err.println("Error updating user: " + ex.getMessage());
         }
     }
+
     @FXML
     public void breakCustomClicked(ActionEvent actionEvent) {
         try {
@@ -160,14 +132,15 @@ public class SettingController {
                 yayText1.setStyle("-fx-text-fill: green;");
             } else {
                 yayText1.setText(" time must be greater than 0! ");
-                yayText1.setStyle("-fx-text-fill: red;");            }
+                yayText1.setStyle("-fx-text-fill: red;");
+            }
         } catch (NumberFormatException e) {
             yayText1.setText("invalid input! ");
             yayText1.setStyle("-fx-text-fill: red;");
         }
     }
 
-    private void updateWorkTime(int time) {
+    protected void updateWorkTime(int time) {
         try (PreparedStatement updateUser = connection.prepareStatement(
                 "UPDATE customSetting SET workTime = ? WHERE user_id = ?")) {
             updateUser.setInt(1, time);
@@ -177,7 +150,6 @@ public class SettingController {
             System.err.println("Error updating user: " + ex.getMessage());
         }
     }
-
 
     @FXML
     public void workCustomClicked(ActionEvent actionEvent) {
@@ -197,65 +169,34 @@ public class SettingController {
         }
     }
 
-//    @FXML
-//    private void c_breakTimeClicked(ActionEvent event){
-//        try {
-//            int customTime = Integer.parseInt(textFieldBreak.getText());
-//            if (customTime > 0) {
-//                CustomSettingDAO.retrieveTimeSetting(customTime);
-//            } else {
-//                showAlert("Invalid Input", "Break interval must be greater than zero.");// Handle invalid input (negative or zero)
-//            }
-//        } catch (NumberFormatException e) {
-//            showAlert("Invalid Input", "Please enter a valid number.");// Handle invalid input (not a number)
-//            timerSet = false; //Ensure flag is false if invalid input
-//        }
-//    }
-
-//    private void getBreakTime_c() {
-//        if (secondsElapsed > 0 && userId > 0) {
-//            userDAO.insertFocusSession(userId, LocalDate.now(), secondsElapsed);
-//            secondsElapsed = 0;
-//        }
-//    }
-
-
-
-    private void setBackgroundTheme (Color color ){
+    protected void setBackgroundTheme(Color color) {
         BackgroundFill backgroundFill = new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY);
         Background background = new Background(backgroundFill);
         rootPane.setBackground(background);
     }
 
-
-    private void updateSoundSetting(String soundName) {
+    protected void updateSoundSetting(String soundName) {
         try (PreparedStatement updateUser = connection.prepareStatement(
                 "UPDATE customSetting SET soundAlert = ? WHERE user_id = ?")) {
-            // Set the themeColor parameter in the prepared statement
-            updateUser.setString(1, soundName); // Assuming themeColor is stored as a string in the database
-            // Set the user id parameter in the prepared statement
-            updateUser.setInt(2, userId); // Assuming you have a variable userId storing the user's ID
-            // Execute the update
+            updateUser.setString(1, soundName);
+            updateUser.setInt(2, userId);
             updateUser.executeUpdate();
         } catch (SQLException ex) {
             System.err.println("Error updating user: " + ex.getMessage());
         }
     }
 
-
-    private void updateCustomSetting(String soundName) {
+    protected void updateCustomSetting(String soundName) {
         try (PreparedStatement updateUser = connection.prepareStatement(
                 "UPDATE customSetting SET themeColor = ? WHERE user_id = ?")) {
-            // Set the themeColor parameter in the prepared statement
-            updateUser.setString(1, soundName); // Assuming themeColor is stored as a string in the database
-            // Set the user id parameter in the prepared statement
-            updateUser.setInt(2, userId); // Assuming you have a variable userId storing the user's ID
-            // Execute the update
+            updateUser.setString(1, soundName);
+            updateUser.setInt(2, userId);
             updateUser.executeUpdate();
         } catch (SQLException ex) {
             System.err.println("Error updating user: " + ex.getMessage());
         }
     }
+
     public void updateBackgroundColor(String colorName) {
         if (colorName != null) {
             switch (colorName) {
@@ -263,31 +204,31 @@ public class SettingController {
                     ShareVarSetting.themeColor = Color.rgb(0, 9, 19);
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
-                    updateCustomSetting(colorName); // Update the database with the new theme color
+                    updateCustomSetting(colorName);
                     break;
                 case "Summer":
                     ShareVarSetting.themeColor = Color.LIGHTCORAL;
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
-                    updateCustomSetting(colorName); // Update the database with the new theme color
+                    updateCustomSetting(colorName);
                     break;
                 case "Autumn":
-                    ShareVarSetting.themeColor = Color.rgb(217,156,19);
+                    ShareVarSetting.themeColor = Color.rgb(217, 156, 19);
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
-                    updateCustomSetting(colorName); // Update the database with the new theme color
+                    updateCustomSetting(colorName);
                     break;
                 case "Winter":
                     ShareVarSetting.themeColor = Color.LIGHTBLUE;
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
-                    updateCustomSetting(colorName); // Update the database with the new theme color
+                    updateCustomSetting(colorName);
                     break;
                 case "Spring":
                     ShareVarSetting.themeColor = Color.LIGHTGREEN;
                     setBackgroundTheme(ShareVarSetting.themeColor);
                     ShareVarSetting.colorActive = colorName;
-                    updateCustomSetting(colorName); // Update the database with the new theme color
+                    updateCustomSetting(colorName);
                     break;
             }
         }
@@ -296,7 +237,7 @@ public class SettingController {
 
     private Clip clip;
 
-    private void getSound(String soundName){
+    protected void getSound(String soundName){
         if ("Default".equals(soundName)) {
             // Stop the previous sound if it's playing
             if (clip != null) {
@@ -312,7 +253,7 @@ public class SettingController {
         playSound(ShareVarSetting.alertSound);
 
     }
-    private void playSound(URL soundURL) {
+    protected void playSound(URL soundURL) {
         if (soundURL != null) {
             try {
                 // Stop the previous sound if it's playing

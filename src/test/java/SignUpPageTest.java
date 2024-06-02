@@ -12,11 +12,11 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LoginPageTest {
+class SignUpPageTest {
     private UserDAO userDAO;
     private Connection connection;
     private int testUserId = 99; // Start with a unique ID for the test user
-    private String testEmail = "testuser99@example.com"; // Ensure a unique email
+    private String testEmail = "testsignupuser99@example.com"; // Ensure a unique email
 
     @BeforeEach
     void setUp() {
@@ -30,26 +30,22 @@ class LoginPageTest {
     }
 
     @Test
-    void testUserLogin() {
+    void testUserSignUp() {
         String password = "password123";
-        User testUser = new User(testUserId, testEmail, password, LocalDate.now(), 0);
+        User testUser = new User(testEmail, password);
 
-        // Insert the test user into the database
-        userDAO.insert(testUser);
+        // Sign up the test user into the database
+        assertDoesNotThrow(() -> userDAO.insert(testUser));
 
-        // Validate the user
+        // Retrieve the inserted user to check if the sign-up was successful
         Integer userId = userDAO.validateUser(testEmail, password);
-        assertNotNull(userId, "User should be valid");
+        assertNotNull(userId, "User should be signed up and valid");
 
-        // Validate day streak update
-        assertDoesNotThrow(() -> userDAO.updateDayStreak(userId), "Updating day streak should not throw an exception");
-
-        // Check if day streak and last login were updated correctly
+        // Check if the user details match
         User retrievedUser = getUserById(userId);
         assertNotNull(retrievedUser, "User should be retrievable from the database");
         assertEquals(testEmail, retrievedUser.getEmail(), "Email should match");
         assertEquals(password, retrievedUser.getPassword(), "Password should match");
-        assertTrue(retrievedUser.getDayStreak() > 0, "Day streak should be greater than 0");
     }
 
     private User getUserById(int userId) {
