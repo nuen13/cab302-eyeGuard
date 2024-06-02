@@ -304,10 +304,12 @@ public class TimeAppController {
 
     @FXML
     private void onLowClicked(ActionEvent event) {
-        if (!breakTimePreset) {
-            newTime = 1800;
+        if (!breakTimePreset){
+            storedWorkTimePreset = 1800; // Set the stored work time preset to 30 minutes (1800 seconds)
+            newTime= storedWorkTimePreset;
         } else {
-            newTime = 600;
+            storedBreakTimePreset = 600; // Set the stored break time preset to 10 minutes (600 seconds)
+            newTime= storedBreakTimePreset;
         }
         updateTimerTime(newTime);
         saveFocusSession();
@@ -315,10 +317,12 @@ public class TimeAppController {
 
     @FXML
     private void onMidClicked(ActionEvent event) {
-        if (!breakTimePreset) {
-            newTime = 2700;
+        if (!breakTimePreset){
+            storedWorkTimePreset = 2700; // Set the stored work time preset to 45 minutes (2700 seconds)
+            newTime= storedWorkTimePreset;
         } else {
-            newTime = 1500;
+            storedBreakTimePreset = 1500; // Set the stored break time preset to 25 minutes (1500 seconds)
+            newTime= storedBreakTimePreset;
         }
         updateTimerTime(newTime);
         saveFocusSession();
@@ -326,10 +330,12 @@ public class TimeAppController {
 
     @FXML
     private void onHighClicked(ActionEvent event) {
-        if (!breakTimePreset) {
-            newTime = 3600;
+        if (!breakTimePreset){
+            storedWorkTimePreset = 3600; // Set the stored work time preset to 1 hour (3600 seconds)
+            newTime= storedWorkTimePreset;
         } else {
-            newTime = 3600;
+            storedBreakTimePreset = 3600; // Set the stored break time preset to 1 hour (3600 seconds)
+            newTime= storedBreakTimePreset;
         }
         updateTimerTime(newTime);
         saveFocusSession();
@@ -503,17 +509,21 @@ public class TimeAppController {
 
     @FXML
     private void onCustomClicked() throws IOException {
-        if (!breakTimePreset) {
+        if (!breakTimePreset){
             if (displayCusTime_work != 0) {
-                newTime = displayCusTime_work * 60;
+                storedWorkTimePreset = displayCusTime_work * 60; // Convert minutes to seconds
+                newTime = storedWorkTimePreset;
             } else {
                 gotosetting();
+                return;
             }
         } else {
             if (displayCusTime_break != 0) {
-                newTime = displayCusTime_break * 60;
+                storedBreakTimePreset = displayCusTime_break * 60; // Convert minutes to seconds
+                newTime = storedBreakTimePreset;
             } else {
                 gotosetting();
+                return;
             }
         }
         updateTimerTime(newTime);
