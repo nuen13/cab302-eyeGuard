@@ -6,14 +6,17 @@ import java.time.ZoneId;
 
 public class UserDAO {
     private Connection connection;
-
+    private CustomSettingDAO customSettingDAO;
     public UserDAO() {
         connection = DatabaseConnection.getInstance();
         initializeDatabase();
     }
 
     private void initializeDatabase() {
+        customSettingDAO = new CustomSettingDAO();
         createUsersTable();
+
+        customSettingDAO.createCustomSettingTable();
     }
 
     private void createUsersTable() {
@@ -23,6 +26,7 @@ public class UserDAO {
                             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "email TEXT UNIQUE, " +
                             "password TEXT, " +
+                            "last_access_date DATE, " +
                             "day_streak INTEGER DEFAULT 0, " +
                             "last_login BIGINT DEFAULT 0)"  // Store as Unix timestamp
             );
@@ -59,16 +63,25 @@ public class UserDAO {
         return null;
     }
 
+
     public void insert(User user) {
         String query = "INSERT INTO users (email, password) VALUES (?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, user.getEmail());
-            statement.setString(2, user.getPassword());
-            statement.executeUpdate();
+        try (PreparedStatement insertUser = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            insertUser.setString(1, user.getEmail());
+            insertUser.setString(2, user.getPassword());
+            insertUser.executeUpdate();
+            try (ResultSet generatedKeys = insertUser.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    user.setId(generatedKeys.getInt(1));
+                    int userId = generatedKeys.getInt(1);
+                    customSettingDAO.saveCustomSetting(userId, "Default", "Default", 0, 0);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     public void updateDayStreak(int userId) {
         LocalDate today = LocalDate.now();
@@ -108,7 +121,6 @@ public class UserDAO {
                     }
                 }
             }
-
             connection.commit();
         } catch (SQLException ex) {
             try {

@@ -17,6 +17,7 @@ public class CustomSetting {
     }
 
     // Getter method for themeColor
+
     public String getThemeColor() {
         return themeColor;
     }

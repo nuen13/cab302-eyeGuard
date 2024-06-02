@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+
 public class TimerManagementApplication extends Application {
     private int userId;
 
@@ -21,16 +22,12 @@ public class TimerManagementApplication extends Application {
         this.userId = userId;
     }
 
-
-
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(TimerManagementApplication.class.getResource("timer-view.fxml"));
         Parent root = fxmlLoader.load();
 
-        // Get the controller and set the userId
         TimeAppController controller = fxmlLoader.getController();
-        System.out.println("asaaa " + userId);
         controller.loadCustomSetting(userId);
         controller.setUserId(userId);
 
@@ -40,7 +37,10 @@ public class TimerManagementApplication extends Application {
         stage.show();
     }
 
+
     public static void main(String[] args) {
         launch(args);
     }
 }
+
+

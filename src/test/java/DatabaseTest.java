@@ -1,5 +1,5 @@
 import com.example.javafxreadingdemo.DatabaseConnection;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 

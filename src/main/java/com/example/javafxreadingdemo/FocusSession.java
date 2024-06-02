@@ -17,9 +17,6 @@ public class FocusSession {
         this.breakTime = breakTime;
     }
 
-    public int getSessionId() {
-        return sessionId;
-    }
 
     public int getUserId() {
         return userId;

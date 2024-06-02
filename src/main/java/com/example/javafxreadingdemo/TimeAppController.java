@@ -28,14 +28,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class TimeAppController {
-
     private Timeline timeline;
     private int secondsElapsed = 0;
     private int timeInterval = 60; // Default break interval in seconds
     private boolean timerSet = false; // Flag to track if break interval has been set
     private int storedWorkTimePreset = 3600; // Default work time preset in seconds (1 hour)
     private int storedBreakTimePreset = 600; // Default break time preset in seconds (10 minutes)
-
     private boolean startActive = false;
     private boolean onstartBtn = true;
     private int newTime = 0;
@@ -75,8 +73,7 @@ public class TimeAppController {
     }
 
     // Default constructor for Application launch
-    public TimeAppController() {
-    }
+    public TimeAppController() {}
 
     public void setUserId(int userId) {
         this.userId = userId;
@@ -91,14 +88,12 @@ public class TimeAppController {
 
         addLogoToLayout();
 
-        // Initialize timer label
         newTime = 1;
         updateTimerTime(newTime);
 
         worktime.setStyle("-fx-background-color: #66BB6A; -fx-text-fill: white; -fx-cursor: hand;");
         breaktime.setStyle("");
 
-        // Create timeline for the timer
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             secondsElapsed--;
             if (secondsElapsed <= 0) {
@@ -130,7 +125,6 @@ public class TimeAppController {
         highBtn.setStyle("-fx-background-color: #212121; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
         customBtn.setStyle("-fx-background-color: #212121; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-cursor: hand;");
 
-        System.out.println("this is important " + userId);
         loadCustomSetting(userId);
     }
 
@@ -214,8 +208,9 @@ public class TimeAppController {
 
         updateTimerLabel();
         updateStartBtn(timerRun);
-    }
 
+
+    }
     private void updateStartBtn(boolean timerRun) {
         if (timerRun) {
             startBtn.setText("Pause");
@@ -383,11 +378,6 @@ public class TimeAppController {
             updateBackgroundColor(setting.getThemeColor());
             getSound(setting.getSoundAlert());
             getCustomTime(setting.getBreakTime(), setting.getWorkTime());
-
-            System.out.println("Theme Color: " + setting.getThemeColor());
-            System.out.println("Sound Alert: " + setting.getSoundAlert());
-            System.out.println("Break Time: " + setting.getBreakTime());
-            System.out.println("Work Time: " + setting.getWorkTime());
         }
     }
 
@@ -398,7 +388,6 @@ public class TimeAppController {
     }
 
     public void updateBackgroundColor(String colorName) {
-        System.out.println("aaaa " + colorName);
         if (colorName != null) {
             switch (colorName) {
                 case "Default":

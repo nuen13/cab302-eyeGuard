@@ -1,10 +1,7 @@
 package com.example.javafxreadingdemo;
 
-import javax.print.DocFlavor;
+
 import java.sql.*;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +23,7 @@ public class CustomSettingDAO {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(
                     "CREATE TABLE IF NOT EXISTS customSetting (" +
-                            "user_id INTEGER, " +
+                            "user_id INTEGER PRIMARY KEY, " + // Make user_id the primary key
                             "themeColor VARCHAR(50), " +
                             "soundAlert VARCHAR(50), " +
                             "breakTime INTEGER, " +
@@ -37,6 +34,7 @@ public class CustomSettingDAO {
             System.err.println("Error while creating customSetting table: " + ex.getMessage());
         }
     }
+
     // Retrieve custom settings for a user
     public List<CustomSetting> getCustomSetting(int userId) {
         List<CustomSetting> settings = new ArrayList<>();
@@ -70,7 +68,8 @@ public class CustomSettingDAO {
     //     Save custom settings for a user
     public void saveCustomSetting(int userId, String themeColor, String soundAlert, int breakTime, int workTime) {
         try (PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO customSetting (user_id, themeColor, soundAlert, breakTime, workTime) VALUES (?, ?, ?, ?, ?)")) {
+                "INSERT OR REPLACE INTO customSetting (user_id, themeColor, soundAlert, breakTime, workTime) " +
+                        "VALUES (?, ?, ?, ?, ?)")) {
             statement.setInt(1, userId);
             statement.setString(2, themeColor);
             statement.setString(3, soundAlert);
@@ -83,6 +82,6 @@ public class CustomSettingDAO {
         }
     }
 
-    // Update custom settings (if needed)
-    // Delete custom settings (if needed)
+
+
 }
