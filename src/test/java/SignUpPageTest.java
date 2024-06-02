@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,11 +43,15 @@ class SignUpPageTest {
             statement.setString(1, email);
             var rs = statement.executeQuery();
             if (rs.next()) {
+                LocalDate lastAccessDate = null;
+                if (rs.getDate("last_access_date") != null) {
+                    lastAccessDate = rs.getDate("last_access_date").toLocalDate();
+                }
                 return new User(
                         rs.getInt("id"),
                         rs.getString("email"),
                         rs.getString("password"),
-                        rs.getDate("last_access_date").toLocalDate(),
+                        lastAccessDate,
                         rs.getInt("day_streak")
                 );
             }
